@@ -79,6 +79,6 @@ For more information on setting up a deployment, see [Set up a Deployment](<http
 
 1. Download the kubeconfig file of the edge node cluster that contains the deployed application. See [Kubeconfig Download](<https://docs.openedgeplatform.intel.com/edge-manage-docs/dev/user_guide/set_up_edge_infra/clusters/accessing_clusters.html>).
 
-1. Follow the steps in the **Pallet Defect Detection** [Documentation](<how-to-deploy-with-helm.md#run-multiple-ai-pipelines>) on the usage of the application.
+1. Follow the steps in the **Pallet Defect Detection** [Documentation](<how-to-deploy-using-helm-charts.md#deploy-the-application>) on the usage of the application.
 
-   > Note: Skip the Deploy Helm chart step.
+   > Note: Skip the Install Helm chart step.
