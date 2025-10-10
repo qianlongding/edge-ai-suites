@@ -46,7 +46,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.12'
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 #3.4.0
       with:
@@ -59,7 +59,7 @@ jobs:
        sudo pip install robotframework
        sudo apt install -y python3-nose 
        python -m pip install --upgrade pip
-       pip3 install selenium
+       python3 -m pip install selenium
        cd edge-ai-suites-repo/metro-ai-suite/metro-vision-ai-app-recipe/test-suite/robot_files
        robot test.robot || true  
        mkdir -p /tmp/test_results
