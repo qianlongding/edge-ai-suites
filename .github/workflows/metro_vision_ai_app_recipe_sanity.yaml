@@ -56,13 +56,16 @@ jobs:
     - name: Install Dependencies
       run: | 
        sudo apt-get update
-       sudo apt install -y python3-nose  python3-dev
-       sudo python3.12 -m pip install  robotframework
-       sudo python3.12 -m pip install  selenium --upgrade --force-reinstall
-       sudo python3.12 -m pip install robotframework-seleniumlibrary
-       sudo python3.12 -m pip install  webdriver-manager
+       sudo apt install -y python3-nose  
+       
     - name: Sanity Test 
       run: | 
+       python3.12 -m venv venv
+       source venv/bin/activate      
+       python3.12 -m pip install  robotframework
+       python3.12 -m pip install  selenium
+       python3.12 -m pip install  robotframework-seleniumlibrary
+       python3.12 -m pip install  webdriver-manager
        cd edge-ai-suites-repo/metro-ai-suite/metro-vision-ai-app-recipe/test-suite/robot_files
        robot test.robot || true  
        mkdir -p /tmp/test_results
