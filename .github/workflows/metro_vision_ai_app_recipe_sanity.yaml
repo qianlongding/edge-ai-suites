@@ -57,10 +57,10 @@ jobs:
       run: | 
        sudo apt-get update
        sudo apt install -y python3-nose  python3-dev
-       sudo python3.12 -m pip install --break-system-packages robotframework
-       sudo python3.12 -m pip install --break-system-packages selenium
-       sudo python3.12 -m pip install --break-system-packages robotframework-seleniumlibrary
-       sudo python3.12 -m pip install --break-system-packages webdriver-manager
+       sudo python3.12 -m pip install  robotframework
+       sudo python3.12 -m pip install  selenium --upgrade --force-reinstall
+       sudo python3.12 -m pip install robotframework-seleniumlibrary
+       sudo python3.12 -m pip install  webdriver-manager
     - name: Sanity Test 
       run: | 
        cd edge-ai-suites-repo/metro-ai-suite/metro-vision-ai-app-recipe/test-suite/robot_files
