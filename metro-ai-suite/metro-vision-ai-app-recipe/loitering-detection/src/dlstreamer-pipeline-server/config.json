@@ -117,25 +117,26 @@
                         }
                     }
                 },
-                "auto_start": false,
-                "publish_frame": true
-            }
-        ]
-    },
-    "interfaces": {
-        "Publishers": [
+                "auto_start": false
+            },
             {
-                "Name": "default",
-                "Type": "zmq_ipc",
-                "zmq_send_hwm": 50,
-                "EndPoint": "/EII/sockets",
-                "Topics": [
-                    "yolov5",
-                    "yolov5_effnet"
-                ],
-                "AllowedClients": [
-                    "*"
-                ]
+                "name": "object_tracking_benchmarking",
+                "source": "gstreamer",
+                "queue_maxsize": 50,
+                "pipeline": "multifilesrc location=/home/pipeline-server/videos/VIRAT_S_000101_looped.mp4 loop=true ! parsebin ! vah264dec ! vapostproc ! video/x-raw(memory:VAMemory) ! gvaattachroi roi=0,200,300,400 ! gvadetect name=detection ! queue ! gvafpscounter ! appsink sync=false async=false",
+                "description": "Object detection benchmarking pipeline",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "detection-properties": {
+                            "element": {
+                                "name": "detection",
+                                "format": "element-properties"
+                            }
+                        }
+                    }
+                },
+                "auto_start": false
             }
         ]
     }
