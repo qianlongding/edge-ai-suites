@@ -74,8 +74,9 @@ jobs:
        ls -al
        python3 -m robot --version
        echo "Attempting to run Robot Framework with verbose output..."
-       python -m robot --loglevel DEBUG  test.robot || echo "Robot Framework execution completed with exit code $?" || true
        mkdir -p /tmp/test_results
+       python -m robot --loglevel DEBUG --outputdir /tmp/test_results test.robot || echo "Robot Framework execution completed with exit code $?" 
+       ls -al /tmp/test_results
        cp -r report.html log.html output.xml  /tmp/test_results/
        passed=$(xmllint --xpath "//return/status[@status='PASS']" ./output.xml | wc -l) || true
        failed=$(xmllint --xpath "//return/status[@status='FAIL']" ./output.xml | wc -l) || true
@@ -88,6 +89,7 @@ jobs:
        echo "- ⏭️ Not Run: $not_run" >> $GITHUB_STEP_SUMMARY
        echo "- 📄 [Full Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
     - name: Upload Scan artifact to Github
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: Sanity_Reports
