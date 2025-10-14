@@ -75,7 +75,7 @@ jobs:
        python3 -m robot --version
        echo "Attempting to run Robot Framework with verbose output..."
        mkdir -p /tmp/test_results
-       python -m robot --loglevel DEBUG --outputdir /tmp/test_results test.robot || true
+       python3 -m robot test.robot || true
        ls -al /tmp/test_results
        ls -al
        cp -r report.html log.html output.xml  /tmp/test_results/
