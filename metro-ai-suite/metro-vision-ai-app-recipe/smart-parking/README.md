@@ -54,4 +54,5 @@ for display in Grafana.
 
 - [Release Notes](./docs/user-guide/release-notes.md)
 - [How to customize the application](./docs/user-guide/how-to-customize-application.md)
+- [How to Run Benchmarking](./docs/user-guide/how-to-benchmark.md): A guide on how to benchmark the application.
 - [Support and Troubleshooting](./docs/user-guide/support.md)
