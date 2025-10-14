@@ -70,7 +70,8 @@ jobs:
        pip3 install --force-reinstall  selenium
        python3 -c "from selenium import webdriver; print('OK')"
        cd edge-ai-suites-repo/metro-ai-suite/metro-vision-ai-app-recipe/test-suite/robot_files
-       python -m robot robot test.robot 
+       python3 -m robot --version
+       python3 -m robot test.robot 
        mkdir -p /tmp/test_results
        cp -r report.html log.html output.xml  /tmp/test_results/
        passed=$(xmllint --xpath "//return/status[@status='PASS']" ./output.xml | wc -l) || true
