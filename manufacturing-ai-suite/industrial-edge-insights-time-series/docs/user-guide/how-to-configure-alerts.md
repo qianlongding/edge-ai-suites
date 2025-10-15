@@ -35,6 +35,8 @@ already added. By default, the `edge-ai-suites/manufacturing-ai-suite/industrial
     .qos(1)
 ```
 
+Similarly, the Weld Anomaly Detection sample app is preconfigured to publish MQTT alerts. You can find its default MQTT alert configuration in the `edge-ai-suites/manufacturing-ai-suite/industrial-edge-insights-time-series/apps/weld-anomaly-detection/time-series-analytics-config/tick_scripts/weld_anomaly_detector.tick` file.
+
 > **Note**: Setting **QoS** to `1` ensures messages are delivered at least once. Alerts are preserved and resent if the MQTT broker reconnects after downtime.
 
 ### Subscribing to MQTT Alerts
@@ -50,10 +52,16 @@ docker exec -ti ia-mqtt-broker mosquitto_sub -h localhost -v -t '#' -p 1883
 - To subscribe to a specific MQTT topic, such as `alerts/wind_turbine`, use the following command. Note that the topic information can be found in the TICKScript:
 
 ```sh
+# Wind Turbine Anomaly Detection
 docker exec -ti ia-mqtt-broker mosquitto_sub -h localhost -v -t alerts/wind_turbine -p 1883
+
+# Weld Anomaly Detection
+docker exec -ti ia-mqtt-broker mosquitto_sub -h localhost -v -t alerts/weld_defects -p 1883
 ```
 
 ### Publishing OPC-UA Alerts
+
+> **Note**: This section is applicable to Wind Turbine Anomaly Dection sample app only.
 
 #### Prerequisite
 
@@ -61,6 +69,8 @@ Ensure that `make up_opcua_ingestion` has been executed by following the steps
 in the [getting started guide](./get-started.md#deploy-with-docker-compose) for the docker compose deployment
 
 To enable OPC-UA alerts in `Time Series Analytics Microservice`, use the following steps.
+
+> **Note**: OPC UA alerts are not supported for Weld Anomaly Detection sample app.
 
 #### Configuration
 
@@ -76,7 +86,7 @@ data0
         .crit(lambda: "anomaly_status" > 0)
         .message('Anomaly detected: Wind Speed: {{ index .Fields "wind_speed" }}, Grid Active Power: {{ index .Fields "grid_active_power" }}, Anomaly Status: {{ index .Fields "anomaly_status" }}')
         .noRecoveries()
-        .post('https://localhost:3000/ts-api/opcua_alerts')
+        .post('http://localhost:5000/opcua_alerts')
         .timeout(30s)
 ```
 > **Note**:
@@ -88,18 +98,15 @@ data0
 Make the following REST API call to the Time Series Analytics microservice. Note that the `mqtt` alerts key is replaced with the `opcua` key and its specific details:
 
 ```sh
-curl -X 'POST' \
+curl -k -X 'POST' \
 'https://<HOST_IP>:3000/ts-api/config' \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-    "model_registry": {
-        "enable": false,
-        "version": "1.0"
-    },
     "udfs": {
         "name": "windturbine_anomaly_detector",
-        "models": "windturbine_anomaly_detector.pkl"
+        "models": "windturbine_anomaly_detector.pkl",
+        "device": "cpu"
     },
     "alerts": {
         "opcua": {
@@ -188,14 +195,15 @@ Configure the tick script by following [these instructions](#1-configure-opc-ua-
 Copy the TICK script using the following command:
 
 ```sh
-cd edge-ai-suites/manufacturing-ai-suite/wind-turbine-anomaly-detection # path relative to git clone folder
+cd edge-ai-suites/manufacturing-ai-suite/industrial-edge-insights-time-series/apps/wind-turbine-anomaly-detection # path relative to git clone folder
 cd time-series-analytics-config
-mkdir -p windturbine_anomaly_detector
-cp -r models tick_scripts udfs windturbine_anomaly_detector/.
+export SAMPLE_APP="wind-turbine-anomaly-detection"
+mkdir -p $SAMPLE_APP
+cp -r models tick_scripts udfs $SAMPLE_APP/.
 
 POD_NAME=$(kubectl get pods -n ts-sample-app -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep deployment-time-series-analytics-microservice | head -n 1)
 
-kubectl cp windturbine_anomaly_detector $POD_NAME:/tmp/ -n ts-sample-app
+kubectl cp $SAMPLE_APP $POD_NAME:/tmp/ -n ts-sample-app
 ```
 
 3. Configuring OPC-UA Alert in config.json
@@ -203,18 +211,15 @@ kubectl cp windturbine_anomaly_detector $POD_NAME:/tmp/ -n ts-sample-app
 Make the following REST API call to the Time Series Analytics microservice. Note that the `mqtt` alerts key is replaced with the `opcua` key and its specific details:
 
 ```sh
-curl -X 'POST' \
-'http://<HOST_IP>:30002/config' \
+curl -k -X 'POST' \
+'https://<HOST_IP>:30001/ts-api/config' \
 -H 'accept: application/json' \
 -H 'Content-Type: application/json' \
 -d '{
-    "model_registry": {
-        "enable": false,
-        "version": "1.0"
-    },
     "udfs": {
         "name": "windturbine_anomaly_detector",
-        "models": "windturbine_anomaly_detector.pkl"
+        "models": "windturbine_anomaly_detector.pkl",
+        "device": "cpu"
     },
     "alerts": {
         "opcua": {

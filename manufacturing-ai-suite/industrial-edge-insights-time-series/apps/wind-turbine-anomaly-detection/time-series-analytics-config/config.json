@@ -1,11 +1,8 @@
 {
-    "model_registry": {
-        "enable": false,
-        "version": "1.0"
-    },
     "udfs": {
         "name": "windturbine_anomaly_detector",
-        "models": "windturbine_anomaly_detector.pkl"
+        "models": "windturbine_anomaly_detector.pkl",
+        "device": "cpu"
     },
     "alerts": {
         "mqtt": {
