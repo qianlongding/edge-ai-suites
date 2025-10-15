@@ -117,6 +117,24 @@
                     }
                 },
                 "auto_start": false
+            },
+            {
+                "name": "weld_porosity_classification_benchmarking",
+                "source": "gstreamer",
+                "queue_maxsize": 50,
+                "pipeline": "multifilesrc location=/home/pipeline-server/resources/videos/welding_looped.avi loop=true ! parsebin ! vah264dec ! vapostproc ! video/x-raw(memory:VAMemory) ! gvaclassify name=classification ! queue ! gvafpscounter ! appsink sync=false async=false",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "classification-properties": {
+                            "element": {
+                                "name": "classification",
+                                "format": "element-properties"
+                            }
+                        }
+                    }
+                },
+                "auto_start": false
             }
         ]
     }
