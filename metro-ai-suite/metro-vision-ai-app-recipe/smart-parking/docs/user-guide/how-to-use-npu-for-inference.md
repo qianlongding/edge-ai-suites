@@ -37,7 +37,7 @@ DL Streamer inference elements also provides property such as `device=NPU` and `
 
 > Note - This sample application already provides a default `compose-without-scenescape.yml` file that includes the necessary NPU access to the containers.
 
-The pipeline `yolov10_1_npu` in [pipeline-server-config](../../src/dlstreamer-pipeline-server/config.json) contains NPU specific elements and uses NPU backend for inferencing. We can start the pipeline as follows:
+The pipeline `yolov11s_1_npu` in [pipeline-server-config](../../src/dlstreamer-pipeline-server/config.json) contains NPU specific elements and uses NPU backend for inferencing. We can start the pipeline as follows:
 
 ```sh
 ./sample_start.sh npu

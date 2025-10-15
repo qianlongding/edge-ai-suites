@@ -7,11 +7,11 @@ function run_sample() {
   device=$2
   interval=10
   if [ $device == "GPU" ]; then
-    pipeline_name="yolov10_1_gpu"
+    pipeline_name="yolov11s_1_gpu"
   elif [ $device == "NPU" ]; then
-    pipeline_name="yolov10_1_npu"
+    pipeline_name="yolov11s_1_npu"
   else
-    pipeline_name="yolov10_1_cpu"
+    pipeline_name="yolov11s_1_cpu"
   fi
   pipeline_list=()
   echo

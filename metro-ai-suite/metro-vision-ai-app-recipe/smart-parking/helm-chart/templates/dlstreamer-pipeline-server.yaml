@@ -79,7 +79,7 @@ spec:
           cd /home/dlstreamer/dlstreamer/samples
           chmod +x download_public_models.sh
           export MODELS_PATH=/tmp/models/
-          ./download_public_models.sh yolov10s
+          ./download_public_models.sh yolo11s coco128
         env:
         - name: http_proxy
           value: {{ $.Values.env.http_proxy }}

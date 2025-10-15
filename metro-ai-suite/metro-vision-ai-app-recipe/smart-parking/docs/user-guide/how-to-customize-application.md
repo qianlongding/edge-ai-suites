@@ -32,14 +32,14 @@ The DL Streamer Pipeline Server is a powerful tool designed to process video fee
 
 The DL Streamer Pipeline Server utilizes GStreamer pipelines to define the flow of video data through various processing elements.
 
-##### Object Detection Pipelines (YOLOv10 Series)
+##### Object Detection Pipelines (YOLOv11s Series)
 
-Pipelines like `yolov10_1`, `yolov10_2`, etc., are used to identify objects in the video frames.
+Pipelines like `yolov11s_1`, `yolov11s_2`, etc., are used to identify objects in the video frames.
 
-*   **Pipelines:** `yolov10_1`, `yolov10_2`, `yolov10_3`, `yolov10_4`
+*   **Pipelines:** `yolov11s_1`, `yolov11s_2`, `yolov11s_3`, `yolov11s_4`
 *   **How They Work:**
     *   **Video Source:** Uses GStreamer to capture live video.
-    *   **Decoding & Detection:** The pipeline decodes the video stream and uses the `gvadetect` element with a YOLO model (located at `/home/pipeline-server/models/public/yolov10s/FP32/yolov10s.xml`) to identify objects.
+    *   **Decoding & Detection:** The pipeline decodes the video stream and uses the `gvadetect` element with a YOLO model (located at `/home/pipeline-server/models/public/yolo11s/INT8/yolo11s.xml`) to identify objects.
     *   **Post-Processing:**
         *   `gvawatermark` adds visual overlays (like bounding boxes) on detected objects.
         *   `gvametaconvert` and `gvametapublish` process and publish the metadata.

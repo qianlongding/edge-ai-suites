@@ -5,7 +5,7 @@ DL Streamer inference elements also provides property such as `device=CPU` and `
 
 ## Tutorial on how to use CPU specific pipelines
 
-The pipeline `yolov10_1_cpu` in [pipeline-server-config](../../src/dlstreamer-pipeline-server/config.json) contains CPU specific elements and uses CPU backend for inferencing. We can start the pipeline as follows:
+The pipeline `yolov11s_1_cpu` in [pipeline-server-config](../../src/dlstreamer-pipeline-server/config.json) contains CPU specific elements and uses CPU backend for inferencing. We can start the pipeline as follows:
 
 ```sh
 ./sample_start.sh cpu
