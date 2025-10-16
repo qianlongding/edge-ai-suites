@@ -1,8 +1,35 @@
 #!/bin/bash
 
+##############################################################################
+# Download OMZ models using OpenVINO Model Zoo
+##############################################################################
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+MODELS_PATH="$SCRIPT_DIR/src/dlstreamer-pipeline-server/models/intel"
+mkdir -p "$MODELS_PATH"
+
+OMZ_MODELS=(pedestrian-and-vehicle-detector-adas-0001)
+for model in "${OMZ_MODELS[@]}"; do
+  if [ ! -e "$MODELS_PATH/$model" ]; then
+    echo "Download $model using OpenVINO Model Zoo..."
+    docker run --rm --user=root \
+      -e http_proxy -e https_proxy -e no_proxy \
+      -v "$MODELS_PATH:/output" \
+      openvino/ubuntu22_dev:2024.6.0 bash -c \
+      "omz_downloader --name $model --output_dir models && \
+      cp -r models/intel/$model /output/ && \
+      chown -R $(id -u):$(id -g) /output"
+    
+    echo "Download $model proc file..."
+    curl -L -o "$MODELS_PATH/${model}/${model}.json" "https://github.com/dlstreamer/dlstreamer/blob/master/samples/gstreamer/model_proc/intel/${model}.json?raw=true"
+  fi
+done
+
+##############################################################################
+# Run main configuration in DL Streamer container
+##############################################################################
 docker run --rm --user=root \
   -e http_proxy -e https_proxy -e no_proxy \
-  -v "$(dirname "$(readlink -f "$0")"):/opt/project" \
+  -v "$SCRIPT_DIR:/opt/project" \
   intel/dlstreamer:2025.1.2-ubuntu24 bash -c "$(cat <<EOF
 
 cd /opt/project
@@ -11,23 +38,6 @@ echo "Configuring application to use \$HOST_IP"
 
 # shellcheck disable=SC1091
 . ./update_dashboard.sh \$HOST_IP
-
-##############################################################################
-# Download OMZ models
-##############################################################################
-mkdir -p src/dlstreamer-pipeline-server/models/intel
-OMZ_MODELS=(pedestrian-and-vehicle-detector-adas-0001)
-for model in "\${OMZ_MODELS[@]}"; do
-  if [ ! -e "src/dlstreamer-pipeline-server/models/intel/\$model/\$model.json" ]; then
-    echo "Download \$model..." && \
-    mkdir -p src/dlstreamer-pipeline-server/models/intel/\${model}/FP32/ && \
-    curl -L -o "src/dlstreamer-pipeline-server/models/intel/\${model}/FP32/\${model}.xml" "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/\${model}/FP32/\${model}.xml?raw=true" && \
-    curl -L -o "src/dlstreamer-pipeline-server/models/intel/\${model}/FP32/\${model}.bin" "https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/\${model}/FP32/\${model}.bin?raw=true" && \
-    echo "Download \$model proc file..." && \
-    curl -L -o "src/dlstreamer-pipeline-server/models/intel/\${model}/\${model}.json" "https://github.com/dlstreamer/dlstreamer/blob/master/samples/gstreamer/model_proc/intel/\${model}.json?raw=true"
-
-  fi
-done
 
 ##############################################################################
 # Download and setup videos
