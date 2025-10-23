@@ -1,21 +1,20 @@
-# Crowd Analytics System Tutorial
+# AI Crowd Analytics Tutorial
 
 <!--
-**Sample Description**: This tutorial demonstrates how to build an intelligent crowd analytics system using edge AI technologies for real-time vehicle detection, license plate recognition, and vehicle attribute analysis.
-
-
-This tutorial walks you through creating an AI-powered tolling system that automatically detects vehicles, recognizes license plates, and analyzes vehicle attributes in real-time. The system leverages Intel's DLStreamer framework with pre-trained AI models to process video streams from toll booth cameras, enabling automated toll collection and traffic monitoring.
+**Sample Description**: This tutorial demonstrates how to build an intelligent crowd analytics system using edge AI technologies for real-time vehicle detection and crowd identification in parking lots.
 -->
 
+This tutorial walks you through creating an AI-powered crowd analytics system that automatically detects vehicles and identifies whether they form a "crowd" (closely grouped vehicles) or are scattered individually. The system leverages Intel's DLStreamer framework with pre-trained AI models to process video streams and analyze vehicle clustering patterns in real-time.
+
 <!--
-**What You Can Do**: This guide covers the complete development workflow for building a Crowd Analytics system.
+**What You Can Do**: This guide covers the complete development workflow for building an AI crowd analytics application.
 -->
 
 By following this guide, you will learn how to:
-- **Set up the Crowd Analytics Application**: Create a new application based on the Smart Parking template and configure it for crowd analytics use cases
-- **Download and Configure AI Models**: Install YOLO object detection models
-- **Configure Video Processing Pipeline**: Set up the DLStreamer pipeline (for real-time vehicle detection and license plate recognition)
-- **Deploy and Run the System**: Launch the containerized application and monitor its performance
+- **Set up the Crowd Analytics Application**: Create a new application based on the Smart Parking template and configure it for crowd detection use cases
+- **Download and Configure AI Models**: Install YOLO object detection models and custom vehicle classification models
+- **Configure Video Processing Pipeline**: Set up the DLStreamer pipeline for real-time vehicle detection and crowd analysis
+- **Deploy and Run the System**: Launch the containerized application and monitor crowd detection performance
 
 ## Prerequisites
 
@@ -33,19 +32,19 @@ By following this guide, you will learn how to:
 ![Crowd Analytics System Diagram](_images/ai-tolling-system.svg)
 
 
-The Crowd Analytics system consists of several key components:
-<!--
-- **Video Input**: Processes live camera feeds or video files from toll booth cameras
-- **Object Detection**: Uses YOLOv10s model to detect vehicles in the video stream
-- **License Plate Recognition**: Employs Intel's specialized model to extract license plate text
-- **Vehicle Attributes**: Analyzes vehicle type, color, and other characteristics
-- **Data Processing**: Aggregates results for toll calculation and traffic monitoring
--->
+The AI Crowd Analytics system consists of several key components:
+- **Video Input**: Processes live camera feeds or video files from parking lot cameras
+- **Vehicle Detection**: Uses YOLOv10s model to detect and track vehicles in the parking lot
+- **Vehicle Tracking**: Maintains consistent vehicle identification across video frames
+- **Crowd Detection Algorithm**: Analyzes vehicle positions using Euclidean distance calculations in Node-RED to identify clusters
+- **Data Processing**: Determines whether detected vehicles form a "crowd" (closely grouped) or are scattered individually
+- **Real-time Analytics**: Provides live updates on crowd formation and dispersal patterns
+
 ## Set up and First Use
 
 ### 1. **Create the Crowd Analytics Application Directory**
 
-Navigate to the metro vision AI recipe directory and create the AI tolling application by copying the Smart Parking template:
+Navigate to the metro vision AI recipe directory and create the crowd-analytics application by copying the Smart Parking template:
 
 ```bash
 cd ./edge-ai-suites/metro-ai-suite/metro-vision-ai-app-recipe
@@ -57,11 +56,12 @@ This creates a new `crowd-analytics` directory with all the necessary applicatio
 ### 2. **Download Sample Video File**
 
 Download a sample video file containing vehicle traffic for testing the AI tolling system:
-<!--
+
 ```bash
 mkdir -p ./crowd-analytics/src/dlstreamer-pipeline-server/videos/
-wget -O ./crowd-analytics/src/dlstreamer-pipeline-server/videos/cars_extended.mp4 \
-  https://github.com/open-edge-platform/edge-ai-resources/raw/refs/heads/main/videos/cars_extended.mp4
+wget -O ./crowd-analytics/src/dlstreamer-pipeline-server/videos/easy1.mp4 \
+  https://github.com/freedomwebtech/yolov8-advance-parkingspace-detection/raw/main/easy1.mp4
+
 ```
 
 <details>
@@ -70,14 +70,12 @@ Video File Details
 </summary>
 
 The sample video contains:
-- Multiple vehicles passing through a toll booth scenario
-- Various vehicle types (cars, trucks)
-- Clear license plate visibility for testing recognition accuracy
-- Duration: Approximately 5 minutes of footage
-- Resolution: 640x360
+- Multiple vehicles in various parking scenarios
+- Examples of both clustered (crowded) and scattered vehicle arrangements
+- Duration: Approximately 21 seconds of footage
 
 </details>
--->
+
 ### 3. **Download and Setup AI Models**
 
 Create and run the model download script to install all required AI models:
@@ -102,14 +100,13 @@ echo "Fix ownership..."
 chown -R "$(id -u):$(id -g)" crowd-analytics/src/dlstreamer-pipeline-server/models crowd-analytics/src/dlstreamer-pipeline-server/videos 2>/dev/null || true
 EOF
 )"
-
 ```
 
-The installation script downloads three essential AI models:
+The installation script downloads and sets up essential AI models:
 
 | **Model Name** | **Purpose** | **Framework** | **Size** |
 |----------------|-------------|---------------|----------|
-| YOLOv10s | Vehicle detection and tracking | PyTorch/OpenVINO | ~20MB |
+| YOLOv10s | Vehicle detection and localization | PyTorch/OpenVINO | ~20MB |
 
 <details>
 <summary>
@@ -120,11 +117,7 @@ The installation script performs the following operations:
 1. Creates the required directory structure under `src/dlstreamer-pipeline-server/models/`
 2. Runs a DLStreamer container to access model download tools
 3. Downloads public YOLO models using the built-in download scripts
-<!--
-4. Uses OpenVINO Model Zoo downloader for Intel-optimized models
--->
-5. Downloads corresponding model configuration files for proper inference
-6. Sets up proper file permissions for container access
+4. Sets up proper file permissions for container access
 
 Expected download time: 5-10 minutes depending on internet connection.
 
@@ -132,7 +125,7 @@ Expected download time: 5-10 minutes depending on internet connection.
 
 ### 4. **Configure the AI Processing Pipeline**
 
-Update the pipeline configuration to use the _________ AI models. Create or update the configuration file:
+Update the pipeline configuration to use the crowd analytics AI models. Create or update the configuration file:
 
 ```bash
 cat > ./crowd-analytics/src/dlstreamer-pipeline-server/config.json << 'EOF'
@@ -150,7 +143,8 @@ cat > ./crowd-analytics/src/dlstreamer-pipeline-server/config.json << 'EOF'
                 "name": "yolov10_1_cpu",
                 "source": "gstreamer",
                 "queue_maxsize": 50,
-                "pipeline": "{auto_source} name=source ! decodebin ! gvadetect model=/home/pipeline-server/models/public/yolov10s/FP32/yolov10s.xml pre-process-backend=opencv threshold=0.7 model-instance-id=inst0 name=detection ! queue ! gvaclassify model=/home/pipeline-server/models/colorcls2/colorcls2.xml model_proc=/home/pipeline-server/models/colorcls2/colorcls2.json pre-process-backend=opencv model-instance-id=inst1 name=classification ! queue ! gvapython module=/home/pipeline-server/models/colorcls2/process class=Process function=process_frame ! queue ! gvawatermark ! gvametaconvert add-empty-results=true name=metaconvert ! gvafpscounter ! appsink name=destination",
+                "pipeline": "{auto_source} name=source ! decodebin ! gvadetect model=/home/pipeline-server/models/public/yolov10s/FP32/yolov10s.xml device=CPU pre-process-backend=ie threshold=0.5 ! queue ! gvatrack tracking-type=zero-term ! queue ! gvawatermark ! gvametaconvert add-empty-results=true name=metaconvert ! gvafpscounter ! appsink name=destination",
+                "description": "Vehicle detection and tracking for crowd analytics",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -178,28 +172,25 @@ cat > ./crowd-analytics/src/dlstreamer-pipeline-server/config.json << 'EOF'
 }
 EOF
 ```
-<!--
 <details>
 <summary>
 Pipeline Configuration Explanation
 </summary>
 
-The GStreamer pipeline configuration defines the AI processing workflow:
+The GStreamer pipeline configuration defines the crowd analytics AI processing workflow:
 
-- **Source**: Accepts video input from files or live streams
-- **Decode**: Converts video format to raw frames for processing
-- **gvadetect**: Runs YOLO object detection to identify vehicles
-- **gvaclassify (1st)**: Applies license plate recognition model to detected vehicles
-- **gvaclassify (2nd)**: Analyzes vehicle attributes (type, color, etc.)
-- **gvawatermark**: Adds visual annotations to processed frames
-- **gvametaconvert**: Converts inference results to structured metadata
-- **gvametapublish**: Publishes results to external systems
+- **Source**: Accepts video input from parking lot camera feeds or video files
+- **Decode**: Converts video format to raw frames for processing  
+- **gvadetect**: Runs YOLOv10s object detection to identify vehicles in the parking lot
+- **gvatrack**: Tracks detected vehicles across frames using zero-term tracking for stability
+- **gvawatermark**: Adds visual annotations showing detected vehicles and bounding boxes
+- **gvametaconvert**: Converts inference results to structured metadata with vehicle positions
+- **gvametapublish**: Publishes vehicle detection data to MQTT for crowd analysis in Node-RED
 - **gvafpscounter**: Monitors processing performance
 
-Each element can be configured for different hardware targets (CPU, GPU, VPU).
+The crowd detection logic (analyzing vehicle clustering and proximity) is handled downstream in Node-RED using the published vehicle position data.
 
 </details>
--->
 ### 5. **Configure Application Environment**
 
 Update the environment configuration to use the Crowd Analytics application:
@@ -275,11 +266,11 @@ Open your web browser and navigate to:
 Start the AI pipeline and process the sample video:
 
 ```bash
-# Start the crowd analytics pipeline with the sample video
+# Start the crowd analytics pipeline with the easy1.mp4 video (basic mode)
 curl -k -s https://localhost/api/pipelines/user_defined_pipelines/yolov10_1_cpu -X POST -H 'Content-Type: application/json' -d '
 {
     "source": {
-        "uri": "file:///home/pipeline-server/videos/new_video_1.mp4",
+        "uri": "file:///home/pipeline-server/videos/easy1.mp4",
         "type": "uri"
     },
     "destination": {
@@ -311,15 +302,46 @@ http://<HOST_IP>:8889/object_detection_1
 
 For local testing, you can use: `http://localhost:8889/object_detection_1`
 
-![Vehicle Live Detection](_images/car_live_detection.jpg)
-<!--
+![Crowd Analytics Live Detection](_images/crowd_analytics_detection.jpg)
+
 Expected results:
-- Vehicle detection accuracy > 90%
-- License plate recognition for clearly visible plates
-- Vehicle attribute classification (car, truck, color)
-- Real-time processing at 15-30 FPS
-- Live video stream with bounding boxes and annotations
--->
+- Vehicle detection accuracy > 90% in parking lot scenarios
+- Real-time vehicle tracking with consistent IDs across frames
+- Crowd detection analysis showing grouped vs scattered vehicles
+- Live video stream with bounding boxes and crowd indicators
+- Processing at 15-30 FPS depending on hardware capabilities
+
+### 5. **Understanding Crowd Detection Logic**
+
+The crowd detection algorithm works through the following process:
+
+1. **Vehicle Detection**: YOLOv10s identifies all vehicles in each video frame with bounding boxes
+2. **Vehicle Tracking**: Maintains consistent vehicle IDs across frames using zero-term tracking
+3. **Position Analysis**: Calculates centroid coordinates for each detected vehicle
+4. **Distance Calculation**: Node-RED computes Euclidean distances between all vehicle pairs
+5. **Clustering Decision**: Applies configurable distance threshold to determine crowd formation:
+   - Vehicles within distance threshold = "crowd" (closely grouped)
+   - Vehicles beyond distance threshold = "scattered" (individually parked)
+6. **Real-time Updates**: Continuously analyzes vehicle arrangements frame by frame
+
+<details>
+<summary>
+Crowd Detection Parameters
+</summary>
+
+Key configurable parameters in Node-RED for crowd analysis:
+- **distance_threshold**: 400 pixels - minimum distance to consider vehicles as separate
+- **intersection_threshold**: 0.85 - overlap threshold for bounding box analysis  
+- **object_confidence**: 0.5 - minimum confidence for vehicle detection
+- **target_object**: ["car", "truck", "bus"] - vehicle types to analyze for crowds
+
+These parameters can be fine-tuned in the Node-RED interface based on:
+- Camera height and angle
+- Parking lot layout and size
+- Desired crowd sensitivity
+- Vehicle density thresholds
+
+</details>
 ## Troubleshooting
 
 ### 1. **Container Startup Issues**
