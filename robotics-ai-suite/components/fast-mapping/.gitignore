@@ -27,7 +27,7 @@ log
 */*.d
 
 # Do not include temporary dir created during build process
-debian/
+./debian/
 *.deb
 *.buildinfo
 *.changes
