@@ -1,0 +1,25 @@
+[
+    {
+        "pipeline": "object_tracking_benchmarking",
+        "payload":{
+            "source": {
+                "uri": "file:///home/pipeline-server/videos/VIRAT_S_000101_looped.mp4",
+                "type": "uri"
+            },
+            "parameters": {
+                "detection-properties": {
+                    "model": "/home/pipeline-server/models/intel/pedestrian-and-vehicle-detector-adas-0001/FP16/pedestrian-and-vehicle-detector-adas-0001.xml",
+                    "device": "GPU",
+                    "inference-interval": 3,
+                    "inference-region": 0,
+                    "batch-size": 8,
+                    "nireq": 2,
+                    "ie-config": "NUM_STREAMS=2",
+                    "pre-process-backend": "va-surface-sharing",
+                    "threshold": 0.7,
+                    "model-instance-id": "instgpu0"
+                }
+            }
+        }
+    }
+]
