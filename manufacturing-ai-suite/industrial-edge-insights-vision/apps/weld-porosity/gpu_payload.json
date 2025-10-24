@@ -1,6 +1,6 @@
 [
     {
-        "pipeline": "weld_porosity_classification",
+        "pipeline": "weld_porosity_classification_gpu",
         "payload": {
             "source": {
                 "uri": "file:///home/pipeline-server/resources/videos/welding_looped.avi",
@@ -17,7 +17,7 @@
                     "model": "/home/pipeline-server/resources/models/weld-porosity/deployment/Classification/model/model.xml",
                     "device": "GPU",
                     "batch-size": 8,
-                    "model-instance-id": "instgpu0",
+                    "model-instance-id": "inst0",
                     "inference-interval": 1,
                     "nireq": 2,
                     "ie-config": "NUM_STREAMS=2",

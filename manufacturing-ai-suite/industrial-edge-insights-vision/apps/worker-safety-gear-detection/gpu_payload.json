@@ -1,6 +1,6 @@
 [
     {
-        "pipeline": "worker_safety_gear_detection",
+        "pipeline": "worker_safety_gear_detection_gpu",
         "payload":{
             "source": {
                 "uri": "file:///home/pipeline-server/resources/videos/Safety_Full_Hat_and_Vest_looped.avi",
@@ -17,7 +17,7 @@
                     "model": "/home/pipeline-server/resources/models/worker-safety-gear-detection/deployment/Detection/model/model.xml",
                     "device": "GPU",
                     "batch-size": 8,
-                    "model-instance-id": "instgpu0",
+                    "model-instance-id": "inst0",
                     "inference-interval": 1,
                     "inference-region": 0,
                     "nireq": 2,
