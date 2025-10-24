@@ -1,20 +1,20 @@
 [
     {
-        "pipeline": "pallet_defect_detection_gpu",
+        "pipeline": "worker_safety_gear_detection",
         "payload":{
             "source": {
-                "uri": "file:///home/pipeline-server/resources/videos/warehouse_looped.avi",
+                "uri": "file:///home/pipeline-server/resources/videos/Safety_Full_Hat_and_Vest_looped.avi",
                 "type": "uri"
             },
             "destination": {
                 "frame": {
                     "type": "webrtc",
-                    "peer-id": "pdd"
+                    "peer-id": "worker_safety"
                 }
             },
             "parameters": {
                 "detection-properties": {
-                    "model": "/home/pipeline-server/resources/models/pallet-defect-detection/deployment/Detection/model/model.xml",
+                    "model": "/home/pipeline-server/resources/models/worker-safety-gear-detection/deployment/Detection/model/model.xml",
                     "device": "GPU",
                     "batch-size": 8,
                     "model-instance-id": "instgpu0",
@@ -22,8 +22,7 @@
                     "inference-region": 0,
                     "nireq": 2,
                     "ie-config": "NUM_STREAMS=2",
-                    "pre-process-backend": "va-surface-sharing",
-                    "threshold": 0.7
+                    "pre-process-backend": "va-surface-sharing"
                 }
             }
         }
