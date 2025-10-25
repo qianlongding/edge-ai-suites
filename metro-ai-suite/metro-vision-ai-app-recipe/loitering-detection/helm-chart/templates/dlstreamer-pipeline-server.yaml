@@ -147,6 +147,14 @@ spec:
           value: "broker"
         - name: MQTT_PORT
           value: "1883"
+        - name: ENABLE_OPEN_TELEMETRY
+          value: "{{ $.Values.env.ENABLE_OPEN_TELEMETRY }}"
+        - name: OTEL_COLLECTOR_HOST
+          value: {{ $.Values.env.HOST_IP }}
+        - name: OTEL_COLLECTOR_PORT
+          value: "{{ $.Values.env.OTEL_COLLECTOR_PORT }}"
+        - name: OTEL_EXPORT_INTERVAL_MILLIS
+          value: "{{ $.Values.env.OTEL_EXPORT_INTERVAL_MILLIS }}"
       volumes:
       - name: vol-pipeline-root-tmpfs0
         emptyDir: {}
