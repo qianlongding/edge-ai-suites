@@ -6,13 +6,8 @@ This guide explains how to create a custom Docker image based on the Intel DL St
 
 ## Prerequisites
 
-Before starting, make sure you have:
+- [System Requirements](system-requirements.md)
 
-- Docker installed and running  
-  ```bash
-  docker --version
-  ```
-- Internet access to download packages and SDKs
 ---
 
 ## Cloning and building the docker image
@@ -86,7 +81,7 @@ docker compose up -d
 
 ### Step 5: Run a test pipeline and dump the camera output into a file in the /tmp directory
 
-Note down serial of the basler camera and update `<basler-camera-serial>` in the following command
+Note down serial number of the basler camera and update `<basler-camera-serial>` in the following command
 ```bash
 docker exec -it dlstreamer-pipeline-server bash
 $ gst-launch-1.0 gencamsrc serial=<basler-camera-serial> pixel-format=bayerrggb name=source ! bayer2rgb ! videoscale ! video/x-raw, width=1920,height=1080 ! videoconvert ! queue ! jpegenc ! avimux ! filesink location=/tmp/gencam_basler_output.avi
