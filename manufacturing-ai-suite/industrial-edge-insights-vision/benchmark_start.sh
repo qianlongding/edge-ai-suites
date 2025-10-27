@@ -149,12 +149,12 @@ function run_pipelines() {
     current_payload=$payload_data
 
     if echo "$payload_data" | jq -e '.destination' > /dev/null; then
+        # Handle WebRTC destinations like sample_start.sh does - simply append stream number to peer-id
         current_payload=$(echo "$payload_data" | jq \
-            --arg topic "${pipeline_name}_$x" \
-            --arg peer_id "${pipeline_name}_$x" \
-            '.destination.metadata.topic = $topic |
-            .destination.frame."peer-id" = $peer_id
-            '
+            --arg stream_num "$x" \
+            'if .destination.frame.path then .destination.frame.path += $stream_num 
+             elif .destination.frame["peer-id"] then .destination.frame["peer-id"] += $stream_num 
+             else . end'
         )
     fi
 
