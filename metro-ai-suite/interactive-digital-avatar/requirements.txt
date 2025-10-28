@@ -42,5 +42,5 @@ PyGObject==3.48.2; sys_platform == 'linux'
 tomli==2.0.1
 
 # 3D render client
-python-socketio==5.11.3
+python-socketio==5.14.0
 eventlet==0.37.0
