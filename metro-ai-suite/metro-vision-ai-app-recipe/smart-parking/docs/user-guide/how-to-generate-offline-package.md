@@ -1,4 +1,4 @@
-# Offline Package Generator - User Guide
+# How to Generate Offline Package
 
 ## Overview
 
@@ -62,6 +62,13 @@ tar -tzf smart-parking-offline-*.tar.gz | head -10
 
 # Generate checksum for integrity verification
 sha256sum smart-parking-offline-*.tar.gz > package-checksum.txt
+```
+**Transfer the tar.gz package and checksum file to your offline environment:**
+
+```
+# Both files need to be transferred together for integrity verification
+# - smart-parking-offline-YYYYMMDD-HHMM.tar.gz (main package)
+# - package-checksum.txt (integrity verification file)
 ```
 
 **Transfer options for DDIL environments:**
