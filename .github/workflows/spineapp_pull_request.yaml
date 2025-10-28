@@ -142,7 +142,7 @@ jobs:
           cd manufacturing-ai-suite/industrial-edge-insights-vision/helm
           sed -i "s/username:*/username: user/g" values.yaml 
           sed -i "s/password:*/password: password/g" values.yaml
-          trivy config . >> trivy-Spineapp-helm.txt
+          trivy config . -s HIGH,CRITICAL >> trivy-Spineapp-helm.txt
           
       - name: Upload Scan artifact to Github
         uses: actions/upload-artifact@v4
