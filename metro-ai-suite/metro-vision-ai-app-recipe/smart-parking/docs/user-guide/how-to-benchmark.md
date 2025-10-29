@@ -38,7 +38,7 @@ During each test run, the script logs the `avg_fps` for every active pipeline in
 
 ## Step 2: Prepare for Benchmarking
 
-1.  **Deploy the Application:** Before running the benchmark, you must deploy the desired application (e.g., Loitering Detection) using its Helm chart. This ensures the DL Streamer Pipeline Server is running and available. For instructions, please refer to the `how-to-deploy-with-helm.md` guide located in the specific application's documentation folder (e.g., `smart-parking/docs/user-guide/`).
+1.  **Set Up and Start the Application:** Before running the benchmark, you must set up and start the desired application (e.g., Smart Parking). This ensures all services, including the DL Streamer Pipeline Server, are running and available. For setup instructions, please refer to the `get-started.md` guide located in the specific application's documentation folder (e.g., `smart-parking/docs/user-guide/`).
 
 2.  **Navigate to Script Directory:** Open a terminal and navigate to the `metro-vision-ai-app-recipe` directory.
 
@@ -54,18 +54,18 @@ During each test run, the script logs the `avg_fps` for every active pipeline in
 
 ## Step 3: Run the Benchmark
 
-The `benchmark_start.sh` script requires a payload file and stream count boundaries to run. The payload files are located within each specific application's directory (e.g., `loitering-detection/`).
+The `benchmark_start.sh` script requires a pipeline name and stream count boundaries to run. The available pipelines are defined in the `benchmark_app_payload.json` file located within each application's directory (e.g., `smart-parking/`).
 
-### Example: Running Stream Density Benchmark for Loitering Detection
+### Example: Running Stream Density Benchmark for Smart Parking
 
-This example will find the maximum number of loitering detection streams that can run on the CPU while maintaining at least 15 FPS.
+This example will find the maximum number of smart parking streams that can run on the CPU while maintaining at least 15 FPS.
 
-1.  Execute the `benchmark_start.sh` script with the CPU payload for loitering detection. Here, we test a range of 1 to 16 streams.
+1.  Execute the `benchmark_start.sh` script, providing the desired pipeline name (`object_tracking_cpu` in this case). Here, we test a range of 1 to 16 streams.
 
     ```bash
-    # Usage: ./benchmark_start.sh -p <payload_file> -l <lower_bound> -u <upper_bound> -t <target_fps>
+    # Usage: ./benchmark_start.sh -p <pipeline_name> -l <lower_bound> -u <upper_bound> -t <target_fps>
     
-    ./benchmark_start.sh -p ./loitering-detection/benchmark_cpu_payload.json -l 1 -u 16 -t 15
+    ./benchmark_start.sh -p object_tracking_cpu -l 1 -u 16 -t 15
     ```
 
 2.  The script will output its progress as it tests different stream counts. The final output will show the optimal stream density found.
