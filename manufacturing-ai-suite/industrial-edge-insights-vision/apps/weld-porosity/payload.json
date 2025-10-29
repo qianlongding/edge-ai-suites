@@ -24,7 +24,7 @@
         "pipeline": "weld_porosity_classification_gpu",
         "payload": {
             "source": {
-                "uri": "file:///home/pipeline-server/resources/videos/welding_looped.avi",
+                "uri": "file:///home/pipeline-server/resources/videos/welding.avi",
                 "type": "uri"
             },
             "destination": {
