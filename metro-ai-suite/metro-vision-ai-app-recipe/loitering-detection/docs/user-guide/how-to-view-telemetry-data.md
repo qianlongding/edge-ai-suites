@@ -9,12 +9,12 @@ DL Streamer Pipeline Server supports gathering metrics over Open Telemetry. The 
 
 ### For Docker
 
-Open [`https://<HOST_IP>/prometheus`](https://<HOST_IP>/prometheus) in your browser to view the prometheus console 
+Open [`https://<HOST_IP>/prometheus/`](https://<HOST_IP>/prometheus/) in your browser to view the prometheus console
 
 
 ### For Helm
 
-Open [`http://<HOST_IP>:30909`](http://<HOST_IP>:30909) in your browser to view the prometheus console 
+Open [`http://<HOST_IP>:30443/prometheus/`](https://<HOST_IP>:30443/prometheus/) in your browser to view the prometheus console
 
 
 ### Try Out the Following Queries
