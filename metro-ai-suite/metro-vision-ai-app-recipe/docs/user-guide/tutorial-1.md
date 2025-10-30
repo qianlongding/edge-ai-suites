@@ -227,6 +227,7 @@ if [ ! -f server.key ] || [ ! -f server.crt ]; then
     chown -R "$(id -u):$(id -g)" server.key server.crt 2>/dev/null || true
 
 fi
+cd ../../../..
 
 # Verify the configuration
 grep SAMPLE_APP= .env
