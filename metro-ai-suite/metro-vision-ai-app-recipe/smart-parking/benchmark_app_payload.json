@@ -20,19 +20,11 @@
             "parameters": {
                 "detection-properties": {
                     "model": "/home/pipeline-server/models/public/yolo11s/INT8/yolo11s.xml",
-                    "device": "CPU",
-                    "model-instance-id": "inst0",
-                    "inference-interval": 3,
-                    "inference-region": 0,
-                    "pre-process-backend": "opencv",
-                    "threshold": 0.7
+                    "device": "CPU"
                 },
                 "classification-properties": {
                     "model": "/home/pipeline-server/models/colorcls2/colorcls2.xml",
-                    "device": "CPU",
-                    "model-instance-id": "inst1",
-                    "inference-interval": 3,
-                    "pre-process-backend": "opencv"
+                    "device": "CPU"
                 }
             }
         }
@@ -58,25 +50,11 @@
             "parameters": {
                 "detection-properties": {
                     "model": "/home/pipeline-server/models/public/yolo11s/INT8/yolo11s.xml",
-                    "device": "GPU",
-                    "batch-size": 8,
-                    "model-instance-id": "instgpu0",
-                    "inference-interval": 3,
-                    "inference-region": 0,
-                    "nireq": 2,
-                    "ie-config": "NUM_STREAMS=2",
-                    "pre-process-backend": "va-surface-sharing",
-                    "threshold": 0.7
+                    "device": "GPU"
                 },
                 "classification-properties": {
                     "model": "/home/pipeline-server/models/colorcls2/colorcls2.xml",
-                    "device": "GPU",
-                    "model-instance-id": "instgpu1",
-                    "inference-interval": 3,
-                    "batch-size": 8,
-                    "nireq": 2,
-                    "ie-config": "NUM_STREAMS=2",
-                    "pre-process-backend": "va-surface-sharing"
+                    "device": "GPU"
                 }
             }
         }
@@ -102,25 +80,13 @@
             "parameters": {
                 "detection-properties": {
                     "model": "/home/pipeline-server/models/public/yolo11s/INT8/yolo11s.xml",
-                    "device": "NPU",
-                    "model-instance-id": "instnpu0",
-                    "batch-size": 1,
-                    "inference-interval": 3,
-                    "inference-region": 0,
-                    "nireq": 2,
-                    "pre-process-backend": "va",
-                    "threshold": 0.7
+                    "device": "NPU"
                 },
                 "classification-properties": {
                     "model": "/home/pipeline-server/models/colorcls2/colorcls2.xml",
-                    "device": "NPU",
-                    "model-instance-id": "instnpu1",
-                    "inference-interval": 3,
-                    "batch-size": 1,
-                    "nireq": 2,
-                    "pre-process-backend": "va"
+                    "device": "NPU"
                 }
             }
         }
     }
-]
+]  
