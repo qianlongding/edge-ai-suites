@@ -315,10 +315,10 @@ Access the processed video stream with AI annotations through WebRTC:
 ```bash
 # Open in your web browser (replace <HOST_IP> with your actual IP address)
 # For local testing, typically use localhost or 127.0.0.1
-http://<HOST_IP>/mediamtx/object_detection_1/
+https://<HOST_IP>/mediamtx/object_detection_1/
 ```
 
-For local testing, you can use: `http://localhost/mediamtx/object_detection_1/`
+For local testing, you can use: `https://localhost/mediamtx/object_detection_1/`
 
 ![Vehicle Live Detection](_images/car_live_detection.jpg)
 

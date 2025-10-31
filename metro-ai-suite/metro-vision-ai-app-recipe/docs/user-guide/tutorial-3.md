@@ -47,7 +47,7 @@ By following this guide, you will learn how to:
 
    ```html
    <iframe 
-     src="http://<HOST_IP>:8889/object_detection_1" 
+     src="https://<HOST_IP>/mediamtx/object_detection_1/" 
      style="width:100%;height:500px;" 
      allow="autoplay; encrypted-media"
      frameborder="0">

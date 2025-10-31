@@ -76,7 +76,7 @@ Remove any existing flows to start with a clean workspace:
 2. **Delete Selected Nodes**: Press the `Delete` key to remove all selected nodes
 3. **Deploy Changes**: Click the red **Deploy** button in the top-right corner to save the changes
 
-- Go to the URL http://<HOST_IP>:1880.
+- Go to the URL https://<HOST_IP>/nodered/.
 - Select everything inside the flow and delete it.
 - This clears the your node red flow.
 
