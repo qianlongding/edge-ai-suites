@@ -460,7 +460,7 @@ jobs:
         pwd
     - name: Convert JSON to CSV
       run: |
-        python3 <<EOF
+        cat > convert_json_to_csv.py << 'EOF'
         import json
         import csv
         import glob
@@ -489,6 +489,7 @@ jobs:
                         "test_name": issue["test_name"]
                     })
         EOF
+        python3 convert_json_to_csv.py
     - name: Upload Scan Reports
       uses: actions/upload-artifact@v4
       with:
