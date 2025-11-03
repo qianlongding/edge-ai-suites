@@ -7,8 +7,8 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
   annotations:
-    meta.helm.sh/release-name: smart-intersection
-    meta.helm.sh/release-namespace: smart-intersection
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 spec:
   capacity:
     storage: 2Gi
@@ -16,7 +16,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
   hostPath:
-    path: /mnt/data/smart-intersection-pgserver-db
+    path: /mnt/data/{{ .Release.Name }}-pgserver-db
 
 ---
 apiVersion: v1
@@ -27,8 +27,8 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
   annotations:
-    meta.helm.sh/release-name: smart-intersection
-    meta.helm.sh/release-namespace: smart-intersection
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 spec:
   capacity:
     storage: 1Gi
@@ -36,7 +36,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
   hostPath:
-    path: /mnt/data/smart-intersection-pgserver-migrations
+    path: /mnt/data/{{ .Release.Name }}-pgserver-migrations
 
 ---
 apiVersion: v1
@@ -47,8 +47,8 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
   annotations:
-    meta.helm.sh/release-name: smart-intersection
-    meta.helm.sh/release-namespace: smart-intersection
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 spec:
   capacity:
     storage: 1Gi
@@ -56,4 +56,4 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
   hostPath:
-    path: /mnt/data/smart-intersection-pgserver-media
+    path: /mnt/data/{{ .Release.Name }}-pgserver-media

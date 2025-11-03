@@ -61,29 +61,23 @@ Replace `your-proxy-server:port` with your actual proxy server details.
 
 
 
-### Setup Storage Provisioner (For Single-Node Clusters)
+### Step 3: Setup Storage (If Needed, for single node clusters)
 
-Check if your cluster has a default storage class with dynamic provisioning. If not, install a storage provisioner:
+Check if your cluster has a default storage class:
 
 ```bash
-# Check for existing storage classes
-kubectl get storageclass
-
-# If no storage classes exist or none are marked as default, install local-path-provisioner
-# This step is typically needed for single-node bare Kubernetes installations
-# (Managed clusters like EKS/GKE/AKS already have storage classes configured)
-
-# Install local-path-provisioner for automatic storage provisioning
-kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
-
-# Set it as default storage class
-kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-
-# Verify storage class is ready
 kubectl get storageclass
 ```
 
-### Step 3: Deploy the application
+If no storage class exists or none is marked as `(default)`, install one:
+
+```bash
+# Install local-path-provisioner for single-node clusters
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+```
+
+### Step 4: Deploy the application
 
 Now you're ready to deploy the Smart Intersection application with nginx reverse proxy and self-signed certificates:
 
@@ -194,54 +188,6 @@ kubectl delete storageclass hostpath local-storage standard
 > **Note**: This complete cleanup will remove storage provisioning from your cluster. You'll need to reinstall the storage provisioner for future deployments that require persistent volumes.
 
 ## Troubleshooting
-
-### Installation Failed: Secrets Already Exist
-
-If you encounter installation errors like:
-```
-Error: INSTALLATION FAILED: 3 errors occurred:
-        * secrets "smart-intersection-web-tls" already exists
-        * secrets "smart-intersection-broker-tls" already exists
-        * secrets "smart-intersection-ca-secret" already exists
-```
-
-This occurs when TLS secrets from a previous deployment still exist in the namespace. To resolve this:
-
-1. **Delete the existing secrets**:
-   ```bash
-   kubectl delete secret smart-intersection-web-tls smart-intersection-broker-tls smart-intersection-ca-secret -n smart-intersection --ignore-not-found
-   ```
-
-2. **Alternative: Delete and recreate the entire namespace** (recommended for clean start):
-   ```bash
-   # Uninstall the Helm release if it exists
-   helm uninstall smart-intersection -n smart-intersection --ignore-not-found
-   
-   # Delete the namespace (this removes all secrets and resources)
-   kubectl delete namespace smart-intersection
-   
-   # Reinstall with a clean slate
-   helm upgrade --install smart-intersection ./smart-intersection/chart \
-     --create-namespace \
-     --set grafana.service.type=NodePort \
-     --set global.storageClassName="" \
-     -n smart-intersection
-   ```
-
-3. **Force recreate secrets if namespace deletion isn't desired**:
-   ```bash
-   # Remove all TLS secrets in the namespace
-   kubectl get secrets -n smart-intersection -o name | grep -E "(tls|ca-secret)" | xargs kubectl delete -n smart-intersection --ignore-not-found
-   
-   # Then retry the helm install
-   helm upgrade --install smart-intersection ./smart-intersection/chart \
-     --create-namespace \
-     --set grafana.service.type=NodePort \
-     --set global.storageClassName="" \
-     -n smart-intersection
-   ```
-
-> **Note**: The automatic certificate generation system creates these TLS secrets during deployment. If they already exist from a previous installation, they must be removed before a fresh deployment.
 
 ### 403 Forbidden Error on Login
 

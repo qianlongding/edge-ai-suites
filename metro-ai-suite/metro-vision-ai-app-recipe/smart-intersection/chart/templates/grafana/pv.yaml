@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: "Helm"  # Required by Helm
   annotations:
-    meta.helm.sh/release-name: "smart-intersection"  # Required by Helm
-    meta.helm.sh/release-namespace: "smart-intersection"  # Required by Helm
+    meta.helm.sh/release-name: "{{ .Release.Name }}"  # Required by Helm
+    meta.helm.sh/release-namespace: "{{ .Release.Namespace }}"  # Required by Helm
 spec:
   capacity:
     storage: 1Gi

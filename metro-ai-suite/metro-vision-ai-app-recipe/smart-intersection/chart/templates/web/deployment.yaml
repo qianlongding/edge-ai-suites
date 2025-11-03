@@ -45,8 +45,8 @@ spec:
           value: {{ .Values.http_proxy | quote }}
         - name: https_proxy
           value: {{ .Values.https_proxy | quote }}
-        - name: no_proxy
-          value: "{{ .Values.no_proxy }},influxdb2, ntpserv,smart-intersection-broker,smart-intersection-dlstreamer-pipeline-server,smart-intersection-grafana,smart-intersection-nodered,smart-intersection-pgserver,smart-intersection-scene,smart-intersection-web"
+          - name: no_proxy
+            value: "{{ .Values.no_proxy }},influxdb2, ntpserv,{{ .Release.Name }}-broker,{{ .Release.Name }}-dlstreamer-pipeline-server,{{ .Release.Name }}-grafana,{{ .Release.Name }}-nodered,{{ .Release.Name }}-pgserver,{{ .Release.Name }}-scene,{{ .Release.Name }}-web"
         - name: DBROOT
           value: /workspace
         - name: RUNSECRETS
@@ -58,7 +58,7 @@ spec:
           mountPath: /workspace/media
         - name: secrets
           mountPath: /tmp/secrets
-        - name: smart-intersection-ri-web-data
+        - name: {{ .Release.Name }}-ri-web-data
           mountPath: /data
         securityContext:
           runAsUser: 0

@@ -49,12 +49,12 @@ spec:
           
           # Generate nginx private key and certificate request
           openssl req -nodes -newkey rsa:2048 \
-            -keyout /tmp/certs/nginx-tls.key \
-            -out /tmp/certs/nginx.csr \
-            -subj "/CN=smart-intersection-nginx/O=nginx-reverse-proxy"
+            -keyout /tmp/certs/ca.key \
+            -out /tmp/certs/ca.csr \
+            -subj "/CN={{ .Release.Name }}-ca/O={{ .Release.Name }}"
           
           # Create nginx extensions file
-          echo "subjectAltName=DNS:smart-intersection-nginx,DNS:web.scenescape.intel.com,DNS:localhost,IP:{{ .Values.global.externalIP | default "127.0.0.1" }}" > /tmp/certs/nginx.ext
+          echo "subjectAltName=DNS:{{ .Release.Name }}-nginx,DNS:web.scenescape.intel.com,DNS:localhost,IP:{{ .Values.global.externalIP | default "127.0.0.1" }}" > /tmp/certs/nginx.ext
           
           # Sign nginx certificate with CA
           openssl x509 -req -in /tmp/certs/nginx.csr -CA /tmp/certs/ca.crt -CAkey /tmp/certs/ca.key -CAcreateserial -out /tmp/certs/nginx-tls.crt -days 365 -extfile /tmp/certs/nginx.ext
@@ -65,10 +65,10 @@ spec:
           openssl req -nodes -newkey rsa:2048 \
             -keyout /tmp/certs/broker-tls.key \
             -out /tmp/certs/broker.csr \
-            -subj "/CN=smart-intersection-broker/O=mqtt-broker"
+            -subj "/CN={{ .Release.Name }}-broker/O=mqtt-broker"
           
           # Create broker extensions file
-          echo "subjectAltName=DNS:smart-intersection-broker,DNS:broker.scenescape.intel.com,DNS:localhost,IP:{{ .Values.global.externalIP | default "127.0.0.1" }}" > /tmp/certs/broker.ext
+          echo "subjectAltName=DNS:{{ .Release.Name }}-broker,DNS:broker.scenescape.intel.com,DNS:localhost,IP:{{ .Values.global.externalIP | default "127.0.0.1" }}" > /tmp/certs/broker.ext
           
           # Sign broker certificate with CA
           openssl x509 -req -in /tmp/certs/broker.csr -CA /tmp/certs/ca.crt -CAkey /tmp/certs/ca.key -CAcreateserial -out /tmp/certs/broker-tls.crt -days 365 -extfile /tmp/certs/broker.ext
@@ -116,7 +116,7 @@ spec:
               \"apiVersion\": \"v1\",
               \"kind\": \"Secret\",
               \"metadata\": {
-                \"name\": \"smart-intersection-broker-tls\",
+                \"name\": \"{{ .Release.Name }}-broker-tls\",
                 \"namespace\": \"{{ .Release.Namespace }}\"
               },
               \"type\": \"kubernetes.io/tls\",
@@ -138,7 +138,7 @@ spec:
               \"apiVersion\": \"v1\",
               \"kind\": \"Secret\",
               \"metadata\": {
-                \"name\": \"smart-intersection-ca-secret\",
+                \"name\": \"{{ .Release.Name }}-ca-secret\",
                 \"namespace\": \"{{ .Release.Namespace }}\"
               },
               \"type\": \"kubernetes.io/tls\",
@@ -157,10 +157,10 @@ spec:
           openssl req -nodes -newkey rsa:2048 \
             -keyout /tmp/certs/web-tls.key \
             -out /tmp/certs/web.csr \
-            -subj "/CN=smart-intersection-web/O=web-service"
+            -subj "/CN={{ .Release.Name }}-web/O=web-service"
           
           # Create web extensions file
-          echo "subjectAltName=DNS:smart-intersection-web,DNS:web.scenescape.intel.com,DNS:localhost,IP:{{ .Values.global.externalIP | default "127.0.0.1" }}" > /tmp/certs/web.ext
+          echo "subjectAltName=DNS:{{ .Release.Name }}-web,DNS:web.scenescape.intel.com,DNS:localhost,IP:{{ .Values.global.externalIP | default "127.0.0.1" }}" > /tmp/certs/web.ext
           
           # Sign web certificate with CA
           openssl x509 -req -in /tmp/certs/web.csr -CA /tmp/certs/ca.crt -CAkey /tmp/certs/ca.key -CAcreateserial -out /tmp/certs/web-tls.crt -days 365 -extfile /tmp/certs/web.ext
@@ -187,7 +187,7 @@ spec:
               \"apiVersion\": \"v1\",
               \"kind\": \"Secret\",
               \"metadata\": {
-                \"name\": \"smart-intersection-web-tls\",
+                \"name\": \"{{ .Release.Name }}-web-tls\",
                 \"namespace\": \"{{ .Release.Namespace }}\"
               },
               \"type\": \"kubernetes.io/tls\",

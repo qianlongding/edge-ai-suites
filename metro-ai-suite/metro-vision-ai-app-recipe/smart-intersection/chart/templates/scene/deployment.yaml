@@ -27,7 +27,7 @@ spec:
           - name: https_proxy
             value: {{ .Values.https_proxy | quote }}
           - name: no_proxy
-            value: "{{ .Values.no_proxy }},influxdb2, ntpserv,smart-intersection-broker,smart-intersection-dlstreamer-pipeline-server,smart-intersection-grafana,smart-intersection-nodered,smart-intersection-pgserver,smart-intersection-scene,smart-intersection-web"
+            value: "{{ .Values.no_proxy }},influxdb2, ntpserv,{{ .Release.Name }}-broker,{{ .Release.Name }}-dlstreamer-pipeline-server,{{ .Release.Name }}-grafana,{{ .Release.Name }}-nodered,{{ .Release.Name }}-pgserver,{{ .Release.Name }}-scene,{{ .Release.Name }}-web"
         command:
           - sh
           - -c
@@ -61,7 +61,12 @@ spec:
           - name: https_proxy
             value: {{ .Values.https_proxy | quote }}
           - name: no_proxy
-            value: "{{ .Values.no_proxy }},influxdb2, ntpserv,smart-intersection-broker,smart-intersection-dlstreamer-pipeline-server,smart-intersection-grafana,smart-intersection-nodered,smart-intersection-pgserver,smart-intersection-scene,smart-intersection-web"
+            value: "{{ .Values.no_proxy }},influxdb2, ntpserv,{{ .Release.Name }}-broker,{{ .Release.Name }}-dlstreamer-pipeline-server,{{ .Release.Name }}-grafana,{{ .Release.Name }}-nodered,{{ .Release.Name }}-pgserver,{{ .Release.Name }}-scene,{{ .Release.Name }}-web"
+          - name: CONTROLLER_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-mqtt-auth-secrets
+                key: controller.auth
         command: ["/bin/bash", "-e", "-c"]
         args:
         - >
@@ -80,12 +85,6 @@ spec:
           runAsUser: 0
           runAsGroup: 0
           readOnlyRootFilesystem: false
-        env:
-        - name: CONTROLLER_AUTH
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-mqtt-auth-secrets
-              key: controller.auth
       volumes:
       - name: pgserver-media
         persistentVolumeClaim:
