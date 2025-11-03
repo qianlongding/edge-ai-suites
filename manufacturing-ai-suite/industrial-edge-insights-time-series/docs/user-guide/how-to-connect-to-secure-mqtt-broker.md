@@ -219,7 +219,7 @@ Edit your sample app config file:
 
 If you're using Mosquitto as your external broker, configure it to use the certificates:
 
-```conf
+```
 # /etc/mosquitto/mosquitto.conf
 
 # Secure listener
