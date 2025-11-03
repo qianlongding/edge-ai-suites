@@ -130,7 +130,9 @@ ia-time-series-analytics-microservice:
 
 ### Configure MQTT Publisher Port
 
-Replace the `HOST_IP` with your external broker's hostname/IP. Add the PORT environment variable to the `ia-mqtt-publisher` service:
+Add the `PORT` and `SECURE_MODE` environment variables to the `ia-mqtt-publisher` service.
+Replace the `<YOUR_MQTT_BROKER_IP>` with your external broker's hostname/IP and `<MQTT_PORT>` with your broker's TLS/SSL port.
+Set `SECURE_MODE` to `true` to use TLS/SSL.
 
 ```yaml
 ia-mqtt-publisher:
@@ -138,6 +140,7 @@ ia-mqtt-publisher:
     AppName: "mqtt-publisher"
     HOST_IP: <YOUR_MQTT_BROKER_IP>
     PORT: <MQTT_PORT>
+    SECURE_MODE: true
     # ... other environment variables ...
 ```
 
@@ -198,13 +201,17 @@ Edit your sample app config file:
 {
   "alerts": {
     "mqtt": {
-      "mqtt_broker_host": "<YOUR_MQTT_BROKER_IP>",
-      "mqtt_broker_port": <MQTT_PORT>,
+      "mqtt_broker_host": "YOUR_MQTT_BROKER_IP",
+      "mqtt_broker_port": MQTT_PORT,
       "name": "my_mqtt_broker"
     }
   }
 }
 ```
+
+**Replace:**
+- `YOUR_MQTT_BROKER_IP` with your broker's IP or hostname
+- `MQTT_PORT` with your broker's TLS port
 
 ## Step 4: Configure Your External MQTT Broker
 
