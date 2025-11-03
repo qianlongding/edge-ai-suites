@@ -41,14 +41,14 @@ jobs:
   build-components:
     needs: check-changes
     if: ${{ needs.check-changes.outputs.components-changed == 'true' }}
-    uses: "./.github/workflows/robotics-components.yaml@pperycz-robotics-build-fast-mapping"
+    uses: "./.github/workflows/robotics-components.yaml"
 
   # build-pipelines:
   #   needs: check-changes
   #   if: ${{ needs.check-changes.outputs.pipelines-changed == 'true' }}
-  #   uses: "./.github/workflows/robotics-pipelines.yaml@pperycz-robotics-build-fast-mapping"
+  #   uses: "./.github/workflows/robotics-pipelines.yaml"
 
   # build-rvc:
   #   needs: check-changes
   #   if: ${{ needs.check-changes.outputs.rvc-changed == 'true' }}
-  #   uses: "./.github/workflows/robotics-rvc.yaml@pperycz-robotics-build-fast-mapping"
+  #   uses: "./.github/workflows/robotics-rvc.yaml"
