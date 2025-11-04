@@ -25,7 +25,7 @@ How it Works
 
 The application workflow has three stages: inputs, processing, and outputs.
 
-.. figure:: ./_images/architecture.png
+.. figure:: ./_images/architecture.svg
    :alt: Diagram illustrating the components and interactions within the Image-Based Video Search system, including inputs, processing, and outputs.
 
    Figure 1: Diagram illustrating the components and interactions within the Image-Based Video Search system, including inputs, processing, and outputs.
@@ -83,5 +83,6 @@ Outputs
    release-notes
    get-started
    how-to-deploy-helm
+   how-to-deploy-with-edge-orchestrator
    GitHub <https://github.com/open-edge-platform/edge-ai-suites/tree/main/metro-ai-suite/image-based-video-search>
    support
