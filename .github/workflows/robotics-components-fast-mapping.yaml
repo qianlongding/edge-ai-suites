@@ -92,8 +92,8 @@ jobs:
         with:
           name: 'test-results-fast-mapping-${{ matrix.ros_distro }}'
           path: |
-            **/build/*/Testing
-            **/build/*/test_results
+            **/build/fast_mapping/Testing
+            **/build/fast_mapping/test_results
 
   build-package:
     needs: [build-test]
@@ -124,7 +124,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p output/fast-mapping
-          find ./ -name "*.deb" -not -name "*-build-deps_*" -not -name "*-dbgsym_*" -exec mv {} output/ \; 2>/dev/null || true
+          find . -name "*.deb" -not -name "*-build-deps_*" -not -name "*-dbgsym_*" -exec mv {} output/fast-mapping \; 2>/dev/null || true
 
       - name: Debug info (artifacts) - output folder
         shell: bash
