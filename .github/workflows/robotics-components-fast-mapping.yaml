@@ -118,11 +118,6 @@ jobs:
             exit 1;
           fi
 
-      - name: Debug info (artifacts) - output folder
-        shell: bash
-        run: |
-          ls -la output/fast-mapping
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4  # v5.0.0
         with:
@@ -154,19 +149,9 @@ jobs:
           name: packages-fast-mapping-${{ matrix.ros_distro }}
           path: ./
 
-      - name: Debug info (artifacts)
-        shell: bash
-        run: |
-          find . -name "*.deb"
-
       - name: Place *.deb in the working folder
         run: |
           mv output/fast-mapping/*.deb .
-
-      - name: Debug info (artifacts)
-        shell: bash
-        run: |
-          find . -name "*.deb"
 
       - name: Run E2E tests
         run: ROS_DISTRO=${{ matrix.ros_distro }} make test-e2e
