@@ -105,10 +105,16 @@ spec:
         image: {{ .Values.dlstreamerPipelineServer.repository }}:{{ .Values.dlstreamerPipelineServer.tag }}
         name: {{ .Release.Name }}-dlstreamer-pipeline-server
         imagePullPolicy: {{ .Values.imagePullPolicy }}
+        {{- if .Values.dlstreamerPipelineServer.gpuWorkload }}
         securityContext:
           privileged: true
           runAsUser: 0
           runAsGroup: 0
+        {{- else }}
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+        {{- end }}
         terminationMessagePath: /tmp/termination-log
         command: ["/bin/bash", "-c"]
         args:
