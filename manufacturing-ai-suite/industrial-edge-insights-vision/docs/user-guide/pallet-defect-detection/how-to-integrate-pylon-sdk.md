@@ -136,7 +136,7 @@ Update the pipeline in `./apps/pallet-defect-detection/configs/pipeline-server-c
     "name": "pallet_defect_detection",
     "source": "gstreamer",
     "queue_maxsize": 50,
-    "pipeline": "gencamsrc serial=<camera id> pixel-format=bayerrggb name=source ! bayer2rgb ! videoscale ! video/x-raw, width=1920, height=1080 ! videoconvert ! gvadetect name=detection model-instance-id=inst0 ! gvametaconvert add-empty-results=true name=metaconvert ! queue ! gvafpscounter ! appsink name=destination"
+    "pipeline": "gencamsrc serial=<camera id> pixel-format=bayerrggb name=source ! bayer2rgb ! videoscale ! video/x-raw, width=1920, height=1080 ! videoconvert ! gvadetect name=detection model-instance-id=inst0 ! gvametaconvert add-empty-results=true name=metaconvert ! queue ! gvafpscounter ! gvawatermark ! appsink name=destination"
 }
 ```
 
@@ -198,7 +198,8 @@ Edit `edge-ai-suites/manufacturing-ai-suite/industrial-edge-insights-vision/apps
             "destination": {
                 "frame": {
                     "type": "webrtc",
-                    "peer-id": "pdd"
+                    "peer-id": "pdd",
+                    "overlay": false
                 }
             },
             "parameters": {

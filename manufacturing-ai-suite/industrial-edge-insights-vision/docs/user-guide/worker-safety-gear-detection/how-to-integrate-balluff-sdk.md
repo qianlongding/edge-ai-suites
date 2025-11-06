@@ -150,7 +150,7 @@ Update the pipeline in `./apps/worker-safety-gear-detection/configs/pipeline-ser
     "name": "worker_safety_gear_detection",
     "source": "gstreamer",
     "queue_maxsize": 50,
-    "pipeline": "gencamsrc serial=<camera id> pixel-format=bayerrggb name=source ! bayer2rgb ! videoscale ! video/x-raw, width=1920, height=1080 ! videoconvert ! gvadetect name=detection model-instance-id=inst0 ! gvametaconvert add-empty-results=true name=metaconvert ! queue ! gvafpscounter ! appsink name=destination"
+    "pipeline": "gencamsrc serial=<camera id> pixel-format=bayerrggb name=source ! bayer2rgb ! videoscale ! video/x-raw, width=1920, height=1080 ! videoconvert ! gvadetect name=detection model-instance-id=inst0 ! gvametaconvert add-empty-results=true name=metaconvert ! queue ! gvafpscounter ! gvawatermark ! appsink name=destination"
 }
 ```
 
@@ -212,7 +212,8 @@ Edit `edge-ai-suites/manufacturing-ai-suite/industrial-edge-insights-vision/apps
             "destination": {
                 "frame": {
                     "type": "webrtc",
-                    "peer-id": "wsgd"
+                    "peer-id": "wsgd",
+                    "overlay": false
                 }
             },
             "parameters": {
