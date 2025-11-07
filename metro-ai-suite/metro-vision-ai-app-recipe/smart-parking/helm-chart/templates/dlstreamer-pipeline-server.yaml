@@ -79,7 +79,7 @@ spec:
           tar -xzf /tmp/main.tar.gz -C /tmp && \
           EXTRACTED_DIR="edge-ai-suites-{{ $.Values.gitSource.ref | replace "/" "-" }}" && \
           {{- end }}
-          cp -r /tmp/${EXTRACTED_DIR}/metro-ai-suite/smart-parking/dlsps/models/* /tmp/models/ && \
+          cp -r /tmp/${EXTRACTED_DIR}/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/models/* /tmp/models/ && \
           rm -rf /tmp/main.tar.gz /tmp/${EXTRACTED_DIR}
           cd /home/dlstreamer/dlstreamer/samples
           chmod +x download_public_models.sh
