@@ -5,7 +5,7 @@
                 "name": "yolov11s",
                 "source": "gstreamer",
                 "queue_maxsize": 50,
-                "pipeline": "{auto_source} name=source ! decodebin force-sw-decoders=true ! videoconvert ! video/x-raw ! gvadetect model=/home/pipeline-server/models/public/yolo11s/INT8/yolo11s.xml pre-process-backend=opencv device=CPU threshold=0.7 inference-interval=1 inference-region=0 model-instance-id=inst0 name=detection ! queue ! gvaclassify model=/home/pipeline-server/models/colorcls2/colorcls2.xml pre-process-backend=opencv device=CPU inference-interval=1 model-instance-id=inst1 inference-region=1 name=classification ! queue ! gvametaconvert add-empty-results=true name=metaconvert ! queue ! gvafpscounter ! appsink name=destination",
+                "pipeline": "{auto_source} name=source ! decodebin ! videoconvert ! video/x-raw ! gvadetect model=/home/pipeline-server/models/public/yolo11s/INT8/yolo11s.xml pre-process-backend=opencv device=CPU threshold=0.7 inference-interval=1 inference-region=0 model-instance-id=inst0 name=detection ! queue ! gvaclassify model=/home/pipeline-server/models/colorcls2/colorcls2.xml pre-process-backend=opencv device=CPU inference-interval=1 model-instance-id=inst1 inference-region=1 name=classification ! queue ! gvametaconvert add-empty-results=true name=metaconvert ! queue ! gvafpscounter ! appsink name=destination",
                 "parameters": {
                     "type": "object",
                     "properties": {
