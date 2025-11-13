@@ -26,7 +26,6 @@
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "hardware_interface/visibility_control.h"
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -56,7 +55,6 @@ public:
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() final;
 
     /**
-     * @brief Called by framework on driver activation
      * 
      * @param previous_state 
      * @return hardware_interface::CallbackReturn returns status of activation
@@ -69,11 +67,8 @@ public:
      * @return hardware_interface::CallbackReturn returns status of deactivation
      */
     hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) final;
-    /// @return controller name
-    std::string get_name() const final
-    {
-        return info_.name;
-    }
+
+    // removing get_name as the function is no longer virtual, but defined in the base class
 
     /**
      * @brief read API implementation

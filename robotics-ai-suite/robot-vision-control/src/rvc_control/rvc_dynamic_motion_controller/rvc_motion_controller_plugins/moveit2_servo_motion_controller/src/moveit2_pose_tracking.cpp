@@ -35,7 +35,6 @@
  *********************************************************************/
 
 #include "moveit2_servo_motion_controller/moveit2_pose_tracking.hpp"
-#include <moveit_servo/servo_parameters.h>
 
 #include <chrono>
 //#include <queue>
@@ -78,11 +77,13 @@ void declareOrGetParam(
 
 
 PoseTracking::PoseTracking(
-    const rclcpp::Node::SharedPtr & node, const moveit_servo::ServoParameters::SharedConstPtr & servo_parameters,
+    const rclcpp::Node::SharedPtr & node,
+    const std::shared_ptr<const servo::ParamListener> servo_param_listener,
     const planning_scene_monitor::PlanningSceneMonitorPtr & planning_scene_monitor)
   : node_(node)
-    , servo_parameters_(servo_parameters)
-    , publish_period(servo_parameters_->publish_period)
+    , servo_param_listener_(servo_param_listener)
+    , servo_params_(servo_param_listener_->get_params())
+    , publish_period(servo_params_.publish_period)
     , planning_scene_monitor_(planning_scene_monitor)
     , loop_rate_(1.0 / publish_period)
     , controllerSpeed(0)    
@@ -100,8 +101,9 @@ PoseTracking::PoseTracking(
 
 
     // Use the C++ interface that Servo provides
-    servo_ = std::make_unique<moveit_servo::Servo>(node_, servo_parameters_, planning_scene_monitor_);
-    servo_->start();
+    servo_ = std::make_unique<moveit_servo::Servo>(node_, servo_param_listener_, planning_scene_monitor_);
+    // set the command type to TWIST for Cartesian control
+    servo_->setCommandType(moveit_servo::CommandType::TWIST);
 
     auto qostransientlocal = rclcpp::QoS(
         rclcpp::QoSInitialization::from_rmw(
@@ -111,7 +113,7 @@ PoseTracking::PoseTracking(
 
     // Publish outgoing twist commands to the Servo object
     twist_stamped_pub_ = node_->create_publisher<geometry_msgs::msg::TwistStamped>(
-        servo_->getParameters()->cartesian_command_in_topic, rclcpp::SystemDefaultsQoS());
+        servo_params_.cartesian_command_in_topic, rclcpp::SystemDefaultsQoS());
     param_subscriber_ = std::make_shared<rclcpp::ParameterEventHandler>(node_);
 
 }
@@ -160,7 +162,7 @@ PoseTrackingStatusCode PoseTracking::moveToPose()
     while ((!haveRecentTargetPose(target_pose_timeout) || !haveRecentEndEffectorPose(target_pose_timeout)) &&
         ((node_->now() - start_time).seconds() < target_pose_timeout))
     {
-        if (servo_->getCommandFrameTransform(command_frame_transform_))
+        if (getCommandFrameTransform(command_frame_transform_))
         {
             command_frame_transform_stamp_ = node_->now();
         }
@@ -320,7 +322,7 @@ void PoseTracking::setTargetPose(const geometry_msgs::msg::PoseStamped::ConstSha
 geometry_msgs::msg::TwistStamped::ConstSharedPtr PoseTracking::calculateTwistCommand()
 {
     // use the shared pool to create a message more efficiently
-    auto msg = moveit::util::make_shared_from_pool<geometry_msgs::msg::TwistStamped>();
+    auto msg = std::make_shared<geometry_msgs::msg::TwistStamped>();
 
     // Get twist components from PID controllers
     geometry_msgs::msg::Twist & twist = msg->twist;
@@ -389,7 +391,7 @@ void PoseTracking::stopMotion()
     stop_requested_ = true;
 
     // Send a 0 command to Servo to halt arm motion
-    auto msg = moveit::util::make_shared_from_pool<geometry_msgs::msg::TwistStamped>();
+    auto msg = std::make_shared<geometry_msgs::msg::TwistStamped>();
     {
         std::lock_guard<std::mutex> lock(target_pose_mtx_);
         msg->header.frame_id = target_pose_.header.frame_id;
@@ -414,8 +416,8 @@ void PoseTracking::resetTargetPose()
 
 bool PoseTracking::getCommandFrameTransform(Eigen::Isometry3d & transform)
 {
-    auto robot_link_command_frame_ = servo_parameters_->ee_frame_name;
-    auto planning_frame = servo_parameters_->planning_frame;
+    auto robot_link_command_frame_ = "ee_link";
+    auto planning_frame = "base_link"; // or planning_frame_
 
     auto current_state_ = planning_scene_monitor_->getStateMonitor()->getCurrentState();
     transform = current_state_->getGlobalLinkTransform(planning_frame).inverse() *

@@ -33,7 +33,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef TRAC_IK_KINEMATICS_PLUGIN_
 #define TRAC_IK_KINEMATICS_PLUGIN_
 
-#include <moveit/kinematics_base/kinematics_base.h>
+#include <moveit/kinematics_base/kinematics_base.hpp>
 #include <kdl/chain.hpp>
 
 namespace trac_ik_kinematics_plugin

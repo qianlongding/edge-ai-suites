@@ -41,11 +41,11 @@
 #pragma once
 
 //#include <atomic>
-#include <moveit_servo/make_shared_from_pool.h>
-#include <moveit_servo/servo_parameters.h>
-#include <moveit_servo/servo.h>
+#include <moveit_servo/servo.hpp>
+#include <moveit_servo/moveit_servo_lib_parameters.hpp>
 //#include <optional>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <rclcpp/version.h>
 #include <tf2_ros/transform_listener.h>
 #include <rclcpp/rclcpp.hpp>
 
@@ -78,7 +78,8 @@ class PoseTracking
 {
 public:
   /** \brief Constructor. Loads ROS parameters under the given namespace. */
-  PoseTracking(const rclcpp::Node::SharedPtr& node, const moveit_servo::ServoParameters::SharedConstPtr& servo_parameters,
+  PoseTracking(const rclcpp::Node::SharedPtr& node,
+               const std::shared_ptr<const servo::ParamListener> servo_param_listener,
                const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_monitor);
 
   PoseTrackingStatusCode moveToPose();
@@ -133,7 +134,8 @@ private:
   void doPostMotionReset();
 
   rclcpp::Node::SharedPtr node_;
-  moveit_servo::ServoParameters::SharedConstPtr servo_parameters_;
+  std::shared_ptr<const servo::ParamListener> servo_param_listener_;
+  servo::Params servo_params_;
   double publish_period;
 
   planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;

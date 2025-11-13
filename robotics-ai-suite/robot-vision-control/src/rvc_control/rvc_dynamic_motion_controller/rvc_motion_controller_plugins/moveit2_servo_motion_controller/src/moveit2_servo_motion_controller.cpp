@@ -75,13 +75,17 @@ Moveit2ServoMotionController::Moveit2ServoMotionController ( )
 bool Moveit2ServoMotionController::init ( rclcpp::Node::SharedPtr node )
 {
     auto res = RVCMotionControllerInterface::init(node);
+    res = true;
 
-    auto servo_parameters = moveit_servo::ServoParameters::makeServoParameters ( node );
+    auto servo_param_listener = std::make_shared<servo::ParamListener>(node, "moveit_servo");
 
-    if ( servo_parameters == nullptr ) {
+    if ( servo_param_listener == nullptr ) {
         RCLCPP_FATAL ( LOGGER, "Could not get servo parameters!" );
         return false;
     }
+
+    // Get the params struct from the listener
+    auto servo_params = servo_param_listener->get_params();
 
     // Load the planning scene monitor
     planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor =
@@ -100,9 +104,9 @@ bool Moveit2ServoMotionController::init ( rclcpp::Node::SharedPtr node )
         planning_scene_monitor::PlanningSceneMonitor::DEFAULT_PLANNING_SCENE_WORLD_TOPIC,
         false /* skip octomap monitor */ );
 
-    RCLCPP_ERROR ( LOGGER, " TOPIC: %s",servo_parameters->joint_topic.c_str() );
-    RCLCPP_ERROR ( LOGGER, " COMMAND OUT TOPIC: %s",servo_parameters->command_out_topic.c_str() );
-    planning_scene_monitor->startStateMonitor ( servo_parameters->joint_topic );
+    RCLCPP_ERROR ( LOGGER, " TOPIC: %s", servo_params.joint_topic.c_str() );
+    RCLCPP_ERROR ( LOGGER, " COMMAND OUT TOPIC: %s", servo_params.command_out_topic.c_str() );
+    planning_scene_monitor->startStateMonitor ( servo_params.joint_topic );
 
     planning_scene_monitor->setPlanningScenePublishingFrequency ( 60 );
     planning_scene_monitor->setStateUpdateFrequency ( 60 );
@@ -140,9 +144,9 @@ bool Moveit2ServoMotionController::init ( rclcpp::Node::SharedPtr node )
 
 
 
-    poseTracker = std::make_unique<PoseTracking> ( node, servo_parameters, planning_scene_monitor ),
+    poseTracker = std::make_unique<PoseTracking> ( node, servo_param_listener, planning_scene_monitor ),
 
-    sub_ = node->create_subscription<std_msgs::msg::Int8> ( servo_parameters->status_topic, 1, std::bind ( &Moveit2ServoMotionController::statusCB, this, std::placeholders::_1 ) );
+    sub_ = node->create_subscription<std_msgs::msg::Int8> ( servo_params.status_topic, 1, std::bind ( &Moveit2ServoMotionController::statusCB, this, std::placeholders::_1 ) );
 
     robot_model_loader::RobotModelLoader robot_model_loader ( node, "robot_description" );
     auto kinematic_model = robot_model_loader.getModel();

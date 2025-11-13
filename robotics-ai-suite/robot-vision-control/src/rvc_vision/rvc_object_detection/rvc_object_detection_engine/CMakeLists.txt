@@ -37,8 +37,10 @@ find_package(pluginlib REQUIRED)
 #find non-ROS dependencies
 
 find_package(rvc_ai_interface REQUIRED)
+find_package(OpenVINO REQUIRED)
 
-message("Openvino version is " ${InferenceEngine_VERSION})
+message(STATUS "OpenVINO version: ${OpenVINO_VERSION}")
+
 #include_directories(include ${OpenCV_INCLUDE_DIRS} )
 include_directories(include  )
 

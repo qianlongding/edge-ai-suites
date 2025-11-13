@@ -1,7 +1,7 @@
 ###########################################
 # Base image
 ###########################################
-FROM ubuntu:22.04 AS rvc-humble-base
+FROM ubuntu:24.04 AS rvc-jazzy-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -40,7 +40,7 @@ RUN sudo add-apt-repository universe \
   && curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg \
   && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null \
   && apt-get update && apt-get install -y --no-install-recommends \
-  ros-humble-ros-base \
+  ros-jazzy-ros-base \
   python3-argcomplete \
   && rm -rf /var/lib/apt/lists/*
 
@@ -48,41 +48,41 @@ RUN bash -c 'wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INT
   && bash -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/intel-repo-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list' \
   && bash -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/intel-repo-keyring.gpg] https://apt.repos.intel.com/openvino/2024 ubuntu22 main" | tee /etc/apt/sources.list.d/intel-openvino-2024.list' \
   && apt-get update && apt-get install -y --no-install-recommends \
-  ros-humble-controller-manager \
-  ros-humble-control-toolbox \
-  ros-humble-xacro \
-  ros-humble-librealsense2 \
-  ros-humble-realsense2-camera \
-  ros-humble-realsense2-description \
-  ros-humble-pcl-conversions \
-  ros-humble-diagnostic-updater \
-  ros-humble-joint-state-broadcaster \
-  ros-humble-joint-trajectory-controller \
-  ros-humble-joint-state-publisher \
-  ros-humble-forward-command-controller \
-  ros-humble-moveit-ros-planning \
-  ros-humble-moveit-ros-planning-interface \
-  ros-humble-moveit-ros-visualization \
-  ros-humble-moveit-servo \
-  ros-humble-velocity-controllers \
-  ros-humble-position-controllers \
-  ros-humble-forward-command-controller \
-  ros-humble-moveit-ros-visualization \
-  ros-humble-compressed-depth-image-transport \
-  ros-humble-compressed-image-transport \
-  ros-humble-image-transport-plugins \
+  ros-jazzy-controller-manager \
+  ros-jazzy-control-toolbox \
+  ros-jazzy-xacro \
+  ros-jazzy-librealsense2 \
+  ros-jazzy-realsense2-camera \
+  ros-jazzy-realsense2-description \
+  ros-jazzy-pcl-conversions \
+  ros-jazzy-diagnostic-updater \
+  ros-jazzy-joint-state-broadcaster \
+  ros-jazzy-joint-trajectory-controller \
+  ros-jazzy-joint-state-publisher \
+  ros-jazzy-forward-command-controller \
+  ros-jazzy-moveit-ros-planning \
+  ros-jazzy-moveit-ros-planning-interface \
+  ros-jazzy-moveit-ros-visualization \
+  ros-jazzy-moveit-servo \
+  ros-jazzy-velocity-controllers \
+  ros-jazzy-position-controllers \
+  ros-jazzy-forward-command-controller \
+  ros-jazzy-moveit-ros-visualization \
+  ros-jazzy-compressed-depth-image-transport \
+  ros-jazzy-compressed-image-transport \
+  ros-jazzy-image-transport-plugins \
   openvino-libraries-dev \
   nlohmann-json3-dev \
   libnlopt-cxx-dev \
   && rm -rf /var/lib/apt/lists/*
 
 
-ENV ROS_DISTRO=humble
-ENV AMENT_PREFIX_PATH=/opt/ros/humble
-ENV COLCON_PREFIX_PATH=/opt/ros/humble
-ENV LD_LIBRARY_PATH=/opt/ros/humble/lib
-ENV PATH=/opt/ros/humble/bin:$PATH
-ENV PYTHONPATH=/opt/ros/humble/lib/python3.10/site-packages
+ENV ROS_DISTRO=jazzy
+ENV AMENT_PREFIX_PATH=/opt/ros/jazzy
+ENV COLCON_PREFIX_PATH=/opt/ros/jazzy
+ENV LD_LIBRARY_PATH=/opt/ros/jazzy/lib
+ENV PATH=/opt/ros/jazzy/bin:$PATH
+ENV PYTHONPATH=/opt/ros/jazzy/lib/python3.12/site-packages
 ENV ROS_PYTHON_VERSION=3
 ENV ROS_VERSION=2
 ENV DEBIAN_FRONTEND=
@@ -90,7 +90,7 @@ ENV DEBIAN_FRONTEND=
 ###########################################
 #  Development image
 ###########################################
-FROM rvc-humble-base AS rvc-humble-dev
+FROM rvc-jazzy-base AS rvc-jazzy-dev
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -103,14 +103,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   python3-argcomplete \
   python3-pip \
   ros-dev-tools \
-  ros-humble-ament-* \
+  ros-jazzy-ament-* \
   vim \
   && rm -rf /var/lib/apt/lists/*
 
 RUN rosdep init || echo "rosdep already initialized"
 
 ARG USERNAME=ros
-ARG USER_UID=1000
+# user 1000 already exists so creating one user that doesn't conflict
+# especially since we're adding sudo support to it
+ARG USER_UID=10001
 ARG USER_GID=$USER_UID
 
 # Create a non-root user

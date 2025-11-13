@@ -3,12 +3,12 @@
 INCLUDE+ .devcontainer/Dockerfile
 
 
-FROM rvc-humble-dev AS rvc-humble-exec
+FROM rvc-jazzy-dev AS rvc-jazzy-exec
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  ros-humble-ur-bringup \
-  ros-humble-ur-robot-driver \
-  ros-humble-ur-calibration \
+  ros-jazzy-hardware-interface \
+  ros-jazzy-ur-robot-driver \
+  ros-jazzy-ur-calibration \
   && rm -rf /var/lib/apt/lists/*
 
 RUN echo "$USERNAME soft rtprio   98" >> /etc/security/limits.conf \

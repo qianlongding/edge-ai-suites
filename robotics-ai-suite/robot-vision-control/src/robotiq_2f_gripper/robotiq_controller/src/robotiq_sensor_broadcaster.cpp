@@ -19,7 +19,6 @@
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/clock.hpp"
 #include "rclcpp/qos.hpp"
-#include "rclcpp/qos_event.hpp"
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "rcpputils/split.hpp"
@@ -90,7 +89,10 @@ controller_interface::return_type RobotiqSensorBroadcaster::update(const rclcpp:
   (void)period;
   if (publish_rate_ > 0.0 && (clock.now() - last_publish_time_) > rclcpp::Duration(1.0 / publish_rate_, 0.0)) {
     // Speed scaling is the only interface of the controller
-    object_grasped_state_msg_.data = state_interfaces_[0].get_value() ;
+    // 0.0 will be converted to std_msgs::msg::UInt16 which is the message type
+    // 0 will mean no object detected, while it does seem like an appropriate value
+    // we can also just to value() with some exception handling
+    object_grasped_state_msg_.data = state_interfaces_[0].get_optional().value_or(0.0);
 
     // publish
     object_grasped_state_publisher_->publish(object_grasped_state_msg_);

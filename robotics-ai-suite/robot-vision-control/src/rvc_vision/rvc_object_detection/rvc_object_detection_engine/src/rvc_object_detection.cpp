@@ -17,7 +17,8 @@
 #include "rvc_vision_messages/msg/rotated_bb_list.hpp"
 #include "sensor_msgs/msg/image.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "cv_bridge/cv_bridge.h"
+#include <rclcpp/version.h>
+#include "cv_bridge/cv_bridge.hpp"
 
 #include "sensor_msgs/msg/image.hpp"
 #include "sensor_msgs/msg/camera_info.hpp"

@@ -276,7 +276,7 @@ void RVCPanel::onInitialize()
     node_ =getDisplayContext()->getRosNodeAbstraction().lock()->get_raw_node();
 
     nodeClient = std::make_shared<rclcpp::Node>("robotDemoRvizPluginNode");
-    reset_robot_client_ = nodeClient->create_client<std_srvs::srv::Trigger>("io_and_status_controller/resend_robot_program", rmw_qos_profile_services_default);
+    reset_robot_client_ = nodeClient->create_client<std_srvs::srv::Trigger>("io_and_status_controller/resend_robot_program", rclcpp::ServicesQoS());
 
     auto inference_rmw_qos = rmw_qos_profile_sensor_data;
 
