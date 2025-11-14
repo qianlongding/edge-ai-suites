@@ -31,7 +31,7 @@ docker run -it \
     --env="WAYLAND_DISPLAY" \
     --env="XDG_RUNTIME_DIR" \
     --env="PULSE_SERVER" \
-    rvc-humble-exec:latest \
+    rvc-jazzy-exec:latest \
     /bin/bash
 
 if [[ $? -ne 0 ]]; then

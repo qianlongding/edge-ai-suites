@@ -26,7 +26,7 @@ else
 fi
 
 # Build the Docker image
-docker build $NO_CACHE -t rvc-humble-exec:latest -f Dockerfile.exec .
+docker build $NO_CACHE -t rvc-jazzy-exec:latest -f Dockerfile.exec .
 if [[ $? -ne 0 ]]; then
     echo "Docker build failed."
     exit 1
