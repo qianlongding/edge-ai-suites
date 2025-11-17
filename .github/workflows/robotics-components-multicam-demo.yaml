@@ -16,6 +16,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    working-directory: robotics-ai-suite/components/multicam-demo
+
 jobs:
   lint:
     name: '[${{ inputs.component-name }}] Lint'
