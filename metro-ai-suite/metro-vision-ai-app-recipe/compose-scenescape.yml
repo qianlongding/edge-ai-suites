@@ -57,7 +57,10 @@ services:
     networks:
       - scenescape
     volumes:
-      - ./${SAMPLE_APP}/src/node-red:/data
+      - ./${SAMPLE_APP}/src/node-red/flows.json:/data/flows.json
+      - ./${SAMPLE_APP}/src/node-red/flows_cred.json:/data/flows_cred.json
+      - ./${SAMPLE_APP}/src/node-red/settings.js:/data/settings.js
+      - ./${SAMPLE_APP}/src/node-red/install_package.sh:/data/install_package.sh
       - node-red-node-modules:/data/node_modules
     secrets:
       - influxdb2-admin-token
@@ -162,9 +165,9 @@ services:
     devices:
       - "/dev/dri:/dev/dri"
     device_cgroup_rules:
-      - "c 189:* rmw"
-      - "c 209:* rmw"
-      - "a 189:* rwm"
+      - 'c 189:* rmw'
+      - 'c 209:* rmw'
+      - 'a 189:* rwm'
     group_add:
       - "109"
       - "110"
