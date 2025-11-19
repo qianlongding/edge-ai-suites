@@ -36,6 +36,8 @@ spec:
               key: DATABASE_PASSWORD
         - name: POSTGRES_DB
           value: "scenescape"
+        - name: PGDATA
+          value: "/workspace/db"
         volumeMounts:
         - name: pgserver-db
           mountPath: /workspace/db
