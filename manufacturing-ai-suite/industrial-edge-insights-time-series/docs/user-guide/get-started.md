@@ -235,7 +235,7 @@ hide_directive-->
 
 <!--hide_directive
 :::
-:::{tab-item} **Weld Anomaly Detection**
+:::{tab-item} hide_directive-->**Weld Anomaly Detection**<!--hide_directive
 :sync: tab2
 hide_directive-->
 
