@@ -192,28 +192,12 @@ spec:
       labels:
         app: nginx-reverse-proxy
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 101
-        runAsGroup: 101
-        fsGroup: 101
-        seccompProfile:
-          type: RuntimeDefault
       containers:
       - name: nginx
         image: nginx:alpine
         ports:
         - containerPort: 80
         - containerPort: 443
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          runAsUser: 101
-          runAsGroup: 101
-          capabilities:
-            drop:
-              - ALL
-          readOnlyRootFilesystem: true
         env:
         - name: http_proxy
           value: {{ .Values.http_proxy }}
@@ -228,12 +212,6 @@ spec:
         - name: nginx-tls
           mountPath: /etc/nginx/ssl
           readOnly: true
-        - name: nginx-cache
-          mountPath: /var/cache/nginx
-        - name: nginx-run
-          mountPath: /var/run
-        - name: nginx-tmp
-          mountPath: /tmp
       volumes:
       - name: nginx-config
         configMap:
@@ -241,12 +219,6 @@ spec:
       - name: nginx-tls
         secret:
           secretName: nginx-reverse-proxy-tls
-      - name: nginx-cache
-        emptyDir: {}
-      - name: nginx-run
-        emptyDir: {}
-      - name: nginx-tmp
-        emptyDir: {}
 
 ---
 apiVersion: v1

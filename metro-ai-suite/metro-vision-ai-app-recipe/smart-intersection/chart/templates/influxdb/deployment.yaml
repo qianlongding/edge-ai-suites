@@ -15,10 +15,6 @@ spec:
       labels:
         app: {{ .Release.Name }}-influxdb
     spec:
-      securityContext:
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: influxdb
           image: "{{ .Values.influxdb.repository }}:{{ .Values.influxdb.tag }}"

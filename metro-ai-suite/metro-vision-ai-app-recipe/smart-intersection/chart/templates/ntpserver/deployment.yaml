@@ -14,10 +14,6 @@ spec:
       labels:
         app: {{ .Release.Name }}-ntpserver
     spec:
-      securityContext:
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
       shareProcessNamespace: true
       containers:
       - envFrom:
