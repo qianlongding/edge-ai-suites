@@ -53,7 +53,7 @@ This page provides troubleshooting steps, FAQs, and resources to help you resolv
       https://localhost/mediamtx/
 
       # When Grafana is opened on https://<HOST_IP>/grafana
-      https://<HOST_IP/mediamtx/
+      https://<HOST_IP>/mediamtx/
       ```
 
 ## Support
