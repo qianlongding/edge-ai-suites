@@ -6,6 +6,7 @@ ARG UBUNTU_VERSION=22.04
 FROM ubuntu:${UBUNTU_VERSION} AS rvc-base
 
 ARG ROS_DISTRO
+ARG PYTHON_VERSION=3.10
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -80,13 +81,13 @@ RUN bash -c 'wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INT
   libnlopt-cxx-dev \
   && rm -rf /var/lib/apt/lists/*
 
-
 ENV ROS_DISTRO=${ROS_DISTRO}
+ENV PYTHON_VERSION=${PYTHON_VERSION}
 ENV AMENT_PREFIX_PATH=/opt/ros/${ROS_DISTRO}
 ENV COLCON_PREFIX_PATH=/opt/ros/${ROS_DISTRO}
 ENV LD_LIBRARY_PATH=/opt/ros/${ROS_DISTRO}/lib
 ENV PATH=/opt/ros/${ROS_DISTRO}/bin:$PATH
-ENV PYTHONPATH=/opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages
+ENV PYTHONPATH=/opt/ros/${ROS_DISTRO}/lib/python${PYTHON_VERSION}/site-packages
 ENV ROS_PYTHON_VERSION=3
 ENV ROS_VERSION=2
 ENV DEBIAN_FRONTEND=
@@ -95,9 +96,11 @@ ENV DEBIAN_FRONTEND=
 #  Development image
 ###########################################
 ARG ROS_DISTRO=humble
+ARG USER_UID=1000
 FROM rvc-base AS rvc-dev
 
 ARG ROS_DISTRO
+ARG USER_UID
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -117,7 +120,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN rosdep init || echo "rosdep already initialized"
 
 ARG USERNAME=ros
-ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Create a non-root user

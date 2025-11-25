@@ -6,9 +6,9 @@ INCLUDE+ .devcontainer/Dockerfile
 FROM rvc-dev AS rvc-exec
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  ros-${ROS_DISTRO}-ur-bringup \
   ros-${ROS_DISTRO}-ur-robot-driver \
   ros-${ROS_DISTRO}-ur-calibration \
+  $(if [ "${ROS_DISTRO}" = "jazzy" ]; then echo "ros-${ROS_DISTRO}-hardware-interface"; else echo "ros-${ROS_DISTRO}-ur-bringup"; fi) \
   && rm -rf /var/lib/apt/lists/*
 
 RUN echo "$USERNAME soft rtprio   98" >> /etc/security/limits.conf \

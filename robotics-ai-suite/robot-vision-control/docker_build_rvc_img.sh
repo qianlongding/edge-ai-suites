@@ -17,17 +17,25 @@
 
 # This script builds the Docker exec image for the RVC
 
-# Usage: ./docker_build_img.sh [ROS_DISTRO] [--no-cache]
-# Example: ./docker_build_img.sh
-# Example: ./docker_build_img.sh humble
-# Example: ./docker_build_img.sh humble --no-cache
+# Usage: ./docker_build_rvc_img.sh [ROS_DISTRO] [--no-cache]
+# Example: ./docker_build_rvc_img.sh (default humble)
+# Example: ./docker_build_rvc_img.sh jazzy --no-cache
 
 set -e
 
 # Parse arguments
 ROS_DISTRO=${1:-humble}
-UBUNTU_VERSION=22.04
 NO_CACHE=""
+
+if [[ "${ROS_DISTRO}" == "jazzy" ]]; then
+    UBUNTU_VERSION="24.04"
+    PYTHON_VERSION="3.12"
+    USER_UID="10001"
+else
+    UBUNTU_VERSION="22.04"
+    PYTHON_VERSION="3.10"
+    USER_UID="1000"
+fi
 
 # Check for --no-cache flag in any position
 for arg in "$@"; do
@@ -36,12 +44,14 @@ for arg in "$@"; do
     fi
 done
 
-echo "Building RVC image with ROS_DISTRO=${ROS_DISTRO} and UBUNTU_VERSION=${UBUNTU_VERSION}"
+echo "Building RVC image with ROS_DISTRO=${ROS_DISTRO}, UBUNTU_VERSION=${UBUNTU_VERSION}, PYTHON_VERSION=${PYTHON_VERSION}, USER_UID=${USER_UID}"
 
 # Build the Docker image
 docker build $NO_CACHE \
     --build-arg ROS_DISTRO=${ROS_DISTRO} \
     --build-arg UBUNTU_VERSION=${UBUNTU_VERSION} \
+    --build-arg PYTHON_VERSION=${PYTHON_VERSION} \
+    --build-arg USER_UID=${USER_UID} \
     -t rvc-exec:${ROS_DISTRO} \
     -f Dockerfile.exec .
 
