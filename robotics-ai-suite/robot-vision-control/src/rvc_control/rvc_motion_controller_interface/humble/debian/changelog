@@ -1,4 +1,4 @@
-ros-humble-rvc-motion-controller-interface (2.1.0jammy) jammy; urgency=high
+ros-humble-rvc-motion-controller-interface (2.3-1) jammy; urgency=high
 
   * Refactor project to allow for multiple ROS distros; humble is the default.
 

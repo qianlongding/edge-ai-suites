@@ -1,4 +1,4 @@
-ros-humble-trac-ik-kinematics-plugin (1.7.0jammy) jammy; urgency=high
+ros-humble-trac-ik-kinematics-plugin (2.3-1) jammy; urgency=high
 
   * Refactor project to allow for multiple ROS distros; humble is the default.
 
