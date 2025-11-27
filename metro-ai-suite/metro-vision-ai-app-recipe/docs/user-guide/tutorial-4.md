@@ -55,7 +55,6 @@ cp -r smart-parking/ crowd-analytics/
 mkdir -p ./crowd-analytics/src/dlstreamer-pipeline-server/videos/
 wget -O ./crowd-analytics/src/dlstreamer-pipeline-server/videos/easy1.mp4 \
   https://github.com/freedomwebtech/yolov8-advance-parkingspace-detection/raw/main/easy1.mp4
-
 ```
 
 <details>
@@ -765,7 +764,7 @@ Create debug nodes to monitor the hotspot analytics pipeline:
 
 ### 8. **Visualizing Hotspot Analytics in Grafana**
 
-The hotspot analytics data published to `hotspot_analytics` can be visualized in real-time using Grafana.
+The hotspot analytics data that would be published to `hotspot_analytics` can be visualized in real-time using Grafana.
 
 #### 8.1 **Access Grafana**: Navigate to `https://<HOST_IP>/grafana` (Username: `admin`, Password: `admin`)
 
@@ -778,8 +777,9 @@ The hotspot analytics data published to `hotspot_analytics` can be visualized in
 
 1. **Create HTML Panel for Live Feed**:
    - In the panel editor, change the visualization type to "Text" (On Right side of Visualization Editor)
-   - Switch to "HTML" mode
-   - Add the following iframe code:
+   - In the panel options set title to "Live Vehicle Crowd Detection Feed"
+   - In the Text option, switch mode to "HTML" mode
+   - Add the following iframe code in the content:
    - In the below code update <HOST_IP> to your host IP address. If you are testing on localhost, update it to localhost.
 
    ```html
@@ -790,30 +790,53 @@ The hotspot analytics data published to `hotspot_analytics` can be visualized in
      frameborder="0">
    </iframe>
    ```
-
-2. **Configure Video Panel Settings**:
-   - Set panel title to "Live Vehicle Crowd Detection Feed"
-   - Click "Apply" to save the panel
-   - Adjust panel size as needed
+2. **Save Dashboard**
+   - Click the "save dashboard" icon at the top right corner of the dashboard
+   - Name your dashboard "Vehicle Crowd Analytics Dashboard"
 
 #### 8.4 **Create Crowd Analytics Data Table**
 
-1. **Add New Panel**:
+1. **Add New Panel and Configure Data Source**:
    - Click "Add Visualization" to create another visualization
-   - Select "Table" as the visualization type (On Right side of Visualization Editor)
-   - Set panel title to "Real-time Vehicle Hotspot Analytics"
-
-2. **Configure Data Source**:
    - Set your MQTT data source as "grafana-mqtt-datasource"
    - Configure topic to fetch hotspot analytics data
    - Update Topic to "hotspot_analytics"
+   - Select "Table" as the visualization type (On Right side of Visualization Editor)
+   - Set panel title to "Real-time Vehicle Hotspot Analytics"
+
+2. **Run the pipeline**:
+   - Use the curl command to start the crowd analytics pipeline
+   
+        ```bash
+        curl -k -s https://localhost/api/pipelines/user_defined_pipelines/yolov11s_crowd_analytics -X POST -H 'Content-Type: application/json' -d '
+        {
+            "source": {
+                "uri": "file:///home/pipeline-server/videos/easy1.mp4",
+                "type": "uri"
+            },
+            "destination": {
+                "metadata": {
+                    "type": "mqtt",
+                    "topic": "object_detection_1",
+                    "timeout": 1000
+                },
+                "frame": {
+                    "type": "webrtc",
+                    "peer-id": "object_detection_1"
+                }
+            },
+            "parameters": {
+                "detection-device": "CPU"
+            }
+        }'
+        ```
+    **Note: It is essential for the pipeline to remain running while applying the transformations in the next step**
 
 3. **Add Transformations** (Transform tab at bottom):   
    - **Sort by**:
       - Click **"+ Add transformation"** → Select **"Sort by"**
       - **Field**: Select **"Time"**
       - **Reverse**: Toggle to **On** (newest first)
-      - Click **Apply**
       
       **Purpose**: Ensures the most recent data for each hotspot appears first
    
@@ -821,30 +844,27 @@ The hotspot analytics data published to `hotspot_analytics` can be visualized in
       - Click **"+ Add transformation"** → Select **"Group by"**
       - **Group by**: Select **"hotspot_id"**
       - **Calculations** (configure for each field):
-        - `timestamp`: Select **"Last"**
-        - `hotspot_number`: Select **"Last"**
-        - `vehicle_count`: Select **"Last"**
-        - `centroid_x`: Select **"Last"**
-        - `centroid_y`: Select **"Last"**
-        - `avg_distance_px`: Select **"Last"**
-        - `max_distance_px`: Select **"Last"**
-        - `vehicle_ids`: Select **"Last"**
-        - `avg_parked_duration_sec`: Select **"Last"**
-        - `avg_parked_frames`: Select **"Last"**
-      - Click **Apply**
+        - `timestamp`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `hotspot_number`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `vehicle_count`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `centroid_x`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `centroid_y`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `avg_distance_px`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `max_distance_px`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `vehicle_ids`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `avg_parked_duration_sec`: Select **Calculate** -> **Select Stats** -> **"Last"**
+        - `avg_parked_frames`: Select **Calculate** -> **Select Stats** -> **"Last"**
 
     You can add more transformations as needed for additional fields.
 
 4. **Configure Time Window and Refresh** (for real-time display):
    - **Time Range** (top-right corner): Set to **"Last 5 seconds"**
    - **Auto-refresh**: Select **"5s"** from dropdown
-   - Click **Save**
 
 5. **Save Dashboard**
    - Click the save icon at the top of the dashboard
-   - Name your dashboard "Vehicle Crowd Analytics Dashboard"
 
-6. **Run the pipeline**:
+6. **Run the pipeline** (if not already running):
    - Use the curl command to start the crowd analytics pipeline to see the expected results:
    
         ```bash
@@ -870,8 +890,11 @@ The hotspot analytics data published to `hotspot_analytics` can be visualized in
             }
         }'
         ```
+        Note: You can check if a pipeline is running currently with `curl -k -s https://localhost/api/pipelines/status`
 
 #### 8.5 **Expected Results**
+
+As per the business logic mentioned in previous steps, you would see that when a minimum of 2 cars are together (parked next to each other), you would see that it is detected as a hotspot. The metadata of the hotspot such as the cars involved in the hotspot, for how long the cars are parked, for how many frames the cars are parked etc., can be seen in the table.
 
 ![Crowd Analytics Grafana](_images/crowd-analytics-grafana.png)
 
