@@ -100,7 +100,7 @@ Contains the python script to process the incoming data.
 Uses CatBoostClassifier machine learning algorithm from the CatBoost library to run on CPU to
 detect anomalous weld data points using sensor data.
 
-**Note**: Please note, CatBoost models doesn't run on Intel GPUs.
+**Note**: Please note, CatBoost models don't run on Intel GPUs.
 
 
 ##### **`tick_scripts/`**
