@@ -76,7 +76,7 @@ Choose **one** of the following approaches to get the Helm charts:
 
 2. Generate the charts:
     ```bash
-    make gen_helm_charts app=weld-anomaly-detection version=1.0.0-rc2
+    make gen_helm_charts app=weld-anomaly-detection version=1.0.0-weekly
     cd helm/
     ```
 
