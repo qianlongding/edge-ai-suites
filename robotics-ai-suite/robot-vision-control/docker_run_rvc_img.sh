@@ -25,24 +25,44 @@ set -e
 
 # Parse arguments
 ROS_DISTRO=${1:-humble}
+CONTAINER_NAME="rvc-container-${ROS_DISTRO}"
 
-echo "Running rvc-exec:${ROS_DISTRO} container..."
+echo "Checking for existing container: ${CONTAINER_NAME}..."
 
-# Run the Docker container
-docker run -it \
-	--volume=/dev:/dev \
-	--volume=/tmp/.X11-unix:/tmp/.X11-unix \
-	--ipc=host \
-    --network=host \
-    --privileged \
-    --env="DISPLAY" \
-    --env="WAYLAND_DISPLAY" \
-    --env="XDG_RUNTIME_DIR" \
-    --env="PULSE_SERVER" \
-    rvc-exec:${ROS_DISTRO} \
-    /bin/bash
+# Check if container already exists
+if [ -n "$(docker ps -aq -f name=^${CONTAINER_NAME}$)" ]; then
+    echo "Container ${CONTAINER_NAME} already exists."
+    
+    # Check if it's running
+    if [ -n "$(docker ps -q -f name=^${CONTAINER_NAME}$)" ]; then
+        echo "Container is already running. Attaching..."
+    else
+        echo "Starting container '${CONTAINER_NAME}'..."
+        docker start "${CONTAINER_NAME}"
+    fi
 
-if [[ $? -ne 0 ]]; then
-    echo "Docker run failed."
-    exit 1
+    # Attach to the container in interactive bash mode
+    docker exec -it "${CONTAINER_NAME}" /bin/bash
+else
+    echo "Creating and running new container: ${CONTAINER_NAME}..."
+    
+    # Run the Docker container
+    docker run -it \
+        --name ${CONTAINER_NAME} \
+        --volume=/dev:/dev \
+        --volume=/tmp/.X11-unix:/tmp/.X11-unix \
+        --ipc=host \
+        --network=host \
+        --privileged \
+        --env="DISPLAY" \
+        --env="WAYLAND_DISPLAY" \
+        --env="XDG_RUNTIME_DIR" \
+        --env="PULSE_SERVER" \
+        rvc-exec:${ROS_DISTRO} \
+        /bin/bash
+    
+    if [[ $? -ne 0 ]]; then
+        echo "Docker run failed."
+        exit 1
+    fi
 fi 
